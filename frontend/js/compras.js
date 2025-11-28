@@ -1,0 +1,61 @@
+import { requireAuth, setUserUI, logout } from './auth.js';
+import { comprasApi, pagosCompraApi } from './api.js';
+
+requireAuth(); setUserUI();
+document.getElementById('btnLogout')?.addEventListener('click', logout);
+
+const cItems = document.getElementById('cItems');
+const tpl = document.getElementById('tplCItem');
+function addItem(){
+  const node = tpl.content.cloneNode(true);
+  node.querySelector('.btn-del').addEventListener('click', (e)=> e.currentTarget.closest('.row').remove());
+  cItems.appendChild(node);
+}
+document.getElementById('cAddItem')?.addEventListener('click', addItem);
+if (cItems && !cItems.children.length) addItem();
+
+document.getElementById('cRegistrar')?.addEventListener('click', async ()=>{
+  const cFeedback = document.getElementById('cFeedback'); cFeedback.textContent=''; cFeedback.className='';
+  const idProveedor = Number(document.getElementById('cIdProveedor').value||'0'); if (!idProveedor) { cFeedback.textContent='ID Proveedor requerido'; cFeedback.className='error'; return; }
+  const estado = document.getElementById('cEstado').value;
+  const items = Array.from(cItems.querySelectorAll('.row')).map(r => ({
+    idProducto: Number(r.querySelector('.idProducto').value),
+    cantidad: Number(r.querySelector('.cantidad').value),
+    costoUnitario: String(Number(r.querySelector('.costoUnitario').value)),
+    fechaVencimiento: r.querySelector('.fechaVencimiento').value || undefined
+  }));
+  if (!items.length) { cFeedback.textContent='Agrega ítems'; cFeedback.className='error'; return; }
+  try {
+    const comp = await comprasApi.registrar({ idProveedor, estado, items });
+    cFeedback.textContent = `Compra #${comp.id} registrada`; cFeedback.className='success';
+    cItems.innerHTML=''; addItem(); loadList();
+  } catch (e) { cFeedback.textContent = e.message; cFeedback.className='error'; }
+});
+
+const tbody = document.querySelector('#tbl tbody');
+async function loadList(){
+  if (!tbody) return;
+  const i = document.getElementById('inicio').value; const f = document.getElementById('fin').value;
+  const list = await comprasApi.listar(i||undefined, f||undefined);
+  tbody.innerHTML='';
+  list.forEach(c => {
+    const tr = document.createElement('tr');
+    tr.innerHTML = `<td>${c.id}</td><td>${c.fechaHora}</td><td>${c.estado}</td><td>${c.total||''}</td>`;
+    tbody.appendChild(tr);
+  });
+}
+document.getElementById('btnBuscar')?.addEventListener('click', loadList);
+loadList();
+
+document.getElementById('btnPagarCompra')?.addEventListener('click', async ()=>{
+  const pcFeedback = document.getElementById('pcFeedback'); pcFeedback.textContent=''; pcFeedback.className='';
+  const idCompra = Number(document.getElementById('pcIdCompra').value); if (!idCompra) { pcFeedback.textContent='ID compra requerido'; pcFeedback.className='error'; return; }
+  const metodo = document.getElementById('pcMetodo').value;
+  const monto = String(Number(document.getElementById('pcMonto').value || '0'));
+  try {
+    const comp = await pagosCompraApi.pagar({ idCompra, metodo, monto });
+    pcFeedback.textContent = `Pago registrado. Estado: ${comp.estado}`; pcFeedback.className='success';
+    loadList();
+  } catch (e) { pcFeedback.textContent = e.message; pcFeedback.className='error'; }
+});
+

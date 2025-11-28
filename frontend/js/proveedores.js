@@ -1,0 +1,46 @@
+import { requireAuth, setUserUI, logout } from './auth.js';
+import { proveedoresApi } from './api.js';
+
+requireAuth(); setUserUI();
+document.getElementById('btnLogout')?.addEventListener('click', logout);
+
+const tbody = document.querySelector('#tbl tbody');
+const form = document.getElementById('form');
+const feedback = document.getElementById('feedback');
+
+async function load(){
+  const list = await proveedoresApi.listar();
+  tbody.innerHTML='';
+  list.forEach(p => {
+    const tr = document.createElement('tr');
+    tr.innerHTML = `<td>${p.id}</td><td>${p.nombre}</td><td>${p.telefono||''}</td><td>${p.esNacional?'Sí':'No'}</td>
+    <td class=\"hstack\"><button class=\"btn\" data-edit=\"${p.id}\">Editar</button><button class=\"btn btn-danger\" data-del=\"${p.id}\">Eliminar</button></td>`;
+    tbody.appendChild(tr);
+  });
+}
+document.getElementById('reload')?.addEventListener('click', load);
+load();
+
+tbody?.addEventListener('click', async (e)=>{
+  const b = e.target.closest('button'); if(!b) return;
+  if (b.dataset.edit) {
+    const id = b.dataset.edit; const p = (await proveedoresApi.listar()).find(x=> String(x.id)===String(id));
+    if (!p) return; 
+    form.elements.id.value = p.id; form.elements.nombre.value = p.nombre; form.elements.telefono.value = p.telefono||''; form.elements.direccion.value = p.direccion||''; form.elements.esNacional.value = String(!!p.esNacional);
+  }
+  if (b.dataset.del) {
+    if (!confirm('¿Eliminar proveedor?')) return;
+    await proveedoresApi.eliminar(b.dataset.del); await load();
+  }
+});
+
+form?.addEventListener('submit', async (e)=>{
+  e.preventDefault(); feedback.textContent=''; feedback.className='';
+  const fd = new FormData(form); const dto = Object.fromEntries(fd.entries());
+  dto.esNacional = dto.esNacional === 'true';
+  try {
+    if (dto.id) { const id = dto.id; delete dto.id; await proveedoresApi.actualizar(id, dto); } else { await proveedoresApi.crear(dto); }
+    feedback.textContent='Guardado'; feedback.className='success'; form.reset(); await load();
+  } catch (e2) { feedback.textContent=e2.message; feedback.className='error'; }
+});
+

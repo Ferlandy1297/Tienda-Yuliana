@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Dashboard | Tienda</title>
+  <link rel="stylesheet" href="./css/styles.css">
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h2>Dashboard</h2>
+      <div class="nav">
+        <a class="pill" href="./productos.html">Productos</a>
+        <a class="pill" href="./ventas.html">Ventas</a>
+        <a class="pill" href="./clientes.html">Clientes</a>
+        <a class="pill" href="./proveedores.html">Proveedores</a>
+        <a class="pill" href="./compras.html">Compras</a>
+        <a class="pill" href="./fiados.html">Fiados</a>
+        <a class="pill" href="./reportes.html">Reportes</a>
+        <a class="pill" href="./devoluciones.html">Devoluciones</a>
+        <a class="pill" href="./caducidades.html">Caducidades</a>
+        <a class="pill" href="./mermas.html">Mermas</a>
+      </div>
+      <div class="right hstack">
+        <span class="tag">Usuario: <span data-username></span></span>
+        <span class="tag">Rol: <span data-rol></span></span>
+        <button id="btnLogout" class="btn btn-outline">Salir</button>
+      </div>
+    </div>
+
+    <div class="metric-grid" id="metrics">
+      <div class="metric"><h3>Ventas de Hoy</h3><div class="value" id="mVentas">-</div></div>
+      <div class="metric"><h3>Productos</h3><div class="value" id="mProductos">-</div></div>
+      <div class="metric"><h3>Stock Bajo</h3><div class="value" id="mLowStock">-</div></div>
+    </div>
+
+    <div class="panel">
+      <h3 class="mb-2">Alertas de stock bajo</h3>
+      <ul id="lowList"></ul>
+    </div>
+
+    <div class="panel">
+      <div class="hstack">
+        <div>Accesos rápidos:</div>
+        <a class="pill" href="./ventas.html">Registrar Venta</a>
+        <a class="pill" href="./productos.html">Gestionar Productos</a>
+        <a class="pill" href="./reportes.html">Ver Reportes</a>
+      </div>
+    </div>
+  </div>
+
+  <script type="module" src="./js/dashboard.js"></script>
+</body>
+</html>

@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Mermas | Tienda</title>
+  <link rel="stylesheet" href="./css/styles.css">
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h2>Mermas</h2>
+      <div class="nav">
+        <a class="pill" href="./dashboard.html">Dashboard</a>
+        <a class="pill" href="./productos.html">Productos</a>
+        <a class="pill" href="./caducidades.html">Caducidades</a>
+      </div>
+      <div class="right hstack">
+        <span class="tag">Rol: <span data-rol></span></span>
+        <button id="btnLogout" class="btn btn-outline">Salir</button>
+      </div>
+    </div>
+
+    <div class="panel">
+      <h3>Registrar merma</h3>
+      <form id="form" class="row">
+        <div class="col"><label>ID Producto</label><input name="idProducto" type="number" min="1" required></div>
+        <div class="col"><label>ID Lote (opcional)</label><input name="idLote" type="number" min="1"></div>
+        <div class="col"><label>Cantidad</label><input name="cantidad" type="number" min="1" value="1" required></div>
+        <div class="col"><label>Motivo</label><input name="motivo" placeholder="dañado, caducado..."></div>
+        <div class="col" style="align-self:end;"><button class="btn btn-primary">Registrar</button></div>
+      </form>
+      <div id="feedback" class="mt-2"></div>
+    </div>
+  </div>
+
+  <script type="module" src="./js/mermas.js"></script>
+</body>
+</html>
+

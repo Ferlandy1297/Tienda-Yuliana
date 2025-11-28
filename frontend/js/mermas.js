@@ -1,0 +1,27 @@
+import { requireAuth, setUserUI, logout } from './auth.js';
+import { mermasApi } from './api.js';
+
+requireAuth(); setUserUI();
+document.getElementById('btnLogout')?.addEventListener('click', logout);
+
+const form = document.getElementById('form');
+const feedback = document.getElementById('feedback');
+
+form?.addEventListener('submit', async (e) => {
+  e.preventDefault(); feedback.textContent=''; feedback.className='';
+  const fd = new FormData(form);
+  const req = {
+    idProducto: Number(fd.get('idProducto')),
+    cantidad: Number(fd.get('cantidad')),
+    motivo: fd.get('motivo') || undefined
+  };
+  const idLote = fd.get('idLote'); if (idLote) req.idLote = Number(idLote);
+  try {
+    const res = await mermasApi.registrar(req);
+    feedback.textContent = `Merma #${res.id} registrada (${res.cantidad})`; feedback.className='success';
+    form.reset();
+  } catch (e2) {
+    feedback.textContent = e2.message; feedback.className='error';
+  }
+});
+

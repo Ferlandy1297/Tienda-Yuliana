@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Caducidades | Tienda</title>
+  <link rel="stylesheet" href="./css/styles.css">
+  </head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h2>Caducidades</h2>
+      <div class="nav">
+        <a class="pill" href="./dashboard.html">Dashboard</a>
+        <a class="pill" href="./compras.html">Compras</a>
+        <a class="pill" href="./mermas.html">Mermas</a>
+      </div>
+      <div class="right hstack">
+        <span class="tag">Rol: <span data-rol></span></span>
+        <button id="btnLogout" class="btn btn-outline">Salir</button>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="toolbar">
+        <label>Días próximos</label>
+        <input id="dias" type="number" min="0" value="30" style="width:120px" />
+        <button id="buscar" class="btn">Buscar</button>
+      </div>
+      <table class="table mt-2" id="tbl">
+        <thead><tr>
+          <th>ID Lote</th><th>Código</th><th>Producto</th><th>Vence</th><th>Cantidad</th><th>Estado</th>
+        </tr></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </div>
+
+  <script type="module" src="./js/caducidades.js"></script>
+</body>
+</html>
+

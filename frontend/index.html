@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Login | Tienda</title>
+  <link rel="stylesheet" href="./css/styles.css">
+</head>
+<body>
+  <div class="container" style="max-width:560px;">
+    <div class="header">
+      <h2>Iniciar sesión</h2>
+    </div>
+    <div class="panel">
+      <form id="loginForm" class="stack">
+        <div>
+          <label for="username">Usuario</label>
+          <input id="username" name="username" placeholder="usuario" required>
+        </div>
+        <div>
+          <label for="password">Contraseña</label>
+          <input id="password" type="password" name="password" placeholder="••••••••" required>
+        </div>
+        <div class="hstack">
+          <button class="btn btn-primary" type="submit">Entrar</button>
+          <span id="feedback" class="right"></span>
+        </div>
+      </form>
+    </div>
+    <div class="footer">Backend: http://localhost:8080 · CORS listo para 5500</div>
+  </div>
+  <script type="module">
+    import { handleLoginForm } from './js/auth.js';
+    const form = document.getElementById('loginForm');
+    const feedback = document.getElementById('feedback');
+    handleLoginForm(form, feedback);
+  </script>
+</body>
+</html>
+

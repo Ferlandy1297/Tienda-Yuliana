@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Fiados | Tienda</title>
+  <link rel="stylesheet" href="./css/styles.css">
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h2>Fiados</h2>
+      <div class="nav">
+        <a class="pill" href="./dashboard.html">Dashboard</a>
+        <a class="pill" href="./ventas.html">Ventas</a>
+      </div>
+      <div class="right hstack">
+        <span class="tag">Rol: <span data-rol></span></span>
+        <button id="btnLogout" class="btn btn-outline">Salir</button>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="hstack"><strong>Clientes con saldo</strong><button id="reload" class="btn right">Recargar</button></div>
+      <table class="table mt-2" id="tbl"><thead><tr><th>ID</th><th>Nombre</th><th>Saldo</th><th>Bloqueado</th><th>Abonar</th></tr></thead><tbody></tbody></table>
+    </div>
+  </div>
+
+  <script type="module" src="./js/fiados.js"></script>
+</body>
+</html>

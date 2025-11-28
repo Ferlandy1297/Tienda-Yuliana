@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Proveedores | Tienda</title>
+  <link rel="stylesheet" href="./css/styles.css">
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h2>Proveedores</h2>
+      <div class="nav">
+        <a class="pill" href="./dashboard.html">Dashboard</a>
+        <a class="pill" href="./compras.html">Compras</a>
+      </div>
+      <div class="right hstack">
+        <span class="tag">Rol: <span data-rol></span></span>
+        <button id="btnLogout" class="btn btn-outline">Salir</button>
+      </div>
+    </div>
+
+    <div class="panel">
+      <form id="form" class="row">
+        <input type="hidden" name="id" />
+        <div class="col"><label>Nombre</label><input name="nombre" required /></div>
+        <div class="col"><label>Teléfono</label><input name="telefono" /></div>
+        <div class="col"><label>Dirección</label><input name="direccion" /></div>
+        <div class="col"><label>Es Nacional</label><select name="esNacional"><option value="false">No</option><option value="true">Sí</option></select></div>
+        <div class="col" style="align-self:end;"><button class="btn btn-primary">Guardar</button></div>
+      </form>
+      <div id="feedback" class="mt-2"></div>
+    </div>
+
+    <div class="panel">
+      <div class="hstack"><strong>Lista</strong><button id="reload" class="btn right">Recargar</button></div>
+      <table class="table mt-2" id="tbl"><thead><tr><th>ID</th><th>Nombre</th><th>Teléfono</th><th>Nacional</th><th>Acciones</th></tr></thead><tbody></tbody></table>
+    </div>
+  </div>
+
+  <script type="module" src="./js/proveedores.js"></script>
+</body>
+</html>

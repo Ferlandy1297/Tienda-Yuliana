@@ -1,0 +1,78 @@
+{
+  "info": {
+    "_postman_id": "7b7d1a42-8d9f-45f3-8e0c-ty-emp-001",
+    "name": "Tienda Yuliana (EMPLEADO)",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": "Colección con endpoints permitidos para EMPLEADO"
+  },
+  "item": [
+    { "name": "Auth", "item": [
+      { "name": "Login", "auth": {"type":"noauth"}, "request": { "method": "POST", "header": [{"key":"Content-Type","value":"application/json"}], "url": { "raw": "{{baseUrl}}/auth/login", "host": ["{{baseUrl}}"], "path": ["auth","login"] }, "body": {"mode":"raw","raw":"{\n  \"username\": \"empleado\",\n  \"password\": \"empleado\"\n}" } }, "response": [], "event": [{"listen":"test","script":{"type":"text/javascript","exec":["const res = pm.response.json();","if (res && res.token) pm.environment.set('token', res.token);"]}}] }
+    ] },
+    { "name": "Dashboard", "item": [ { "name": "Resumen de Hoy", "auth": {"type":"noauth"}, "request": { "method": "GET", "url": {"raw":"{{baseUrl}}/dashboard/summary","host":["{{baseUrl}}"],"path":["dashboard","summary"] } } } ] },
+    { "name": "Productos", "item": [
+      { "name": "Stock Bajo", "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/productos/stock-bajo", "host": ["{{baseUrl}}"], "path": ["productos","stock-bajo"] } } }
+    ] },
+    { "name": "Clientes", "item": [
+      { "name": "Listar (solo lectura)", "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/clientes", "host": ["{{baseUrl}}"], "path": ["clientes"] } } },
+      { "name": "Obtener por ID (solo lectura)", "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/clientes/1", "host": ["{{baseUrl}}"], "path": ["clientes","1"] } } }
+    ] },
+    { "name": "Proveedores", "item": [
+      { "name": "Listar (solo lectura)", "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/proveedores", "host": ["{{baseUrl}}"], "path": ["proveedores"] } } },
+      { "name": "Obtener por ID (solo lectura)", "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/proveedores/1", "host": ["{{baseUrl}}"], "path": ["proveedores","1"] } } }
+    ] },
+    { "name": "Ventas", "item": [
+      { "name": "Registrar Venta", "request": { "method": "POST", "header": [{"key":"Content-Type","value":"application/json"}], "url": { "raw": "{{baseUrl}}/ventas", "host": ["{{baseUrl}}"], "path": ["ventas"] }, "body": {"mode":"raw","raw":"{\n  \"tipo\": \"MOSTRADOR\",\n  \"idCliente\": 1,\n  \"items\": [\n    { \"idProducto\": 1, \"cantidad\": 2 }\n  ],\n  \"pago\": { \"metodo\": \"EFECTIVO\", \"monto\": 100, \"denominacion\": 100 }\n}"} } },
+      { "name": "Registrar Venta (MAYOREO)", "request": { "method": "POST", "header": [{"key":"Content-Type","value":"application/json"}], "url": { "raw": "{{baseUrl}}/ventas", "host": ["{{baseUrl}}"], "path": ["ventas"] }, "body": {"mode":"raw","raw":"{\n  \"tipo\": \"MAYOREO\",\n  \"idCliente\": 2,\n  \"items\": [\n    { \"idProducto\": 1, \"cantidad\": 10 }\n  ],\n  \"pago\": { \"metodo\": \"EFECTIVO\", \"monto\": 300, \"denominacion\": 300 }\n}"} } },
+      { "name": "Registrar Venta (FIADO)", "request": { "method": "POST", "header": [{"key":"Content-Type","value":"application/json"}], "url": { "raw": "{{baseUrl}}/ventas", "host": ["{{baseUrl}}"], "path": ["ventas"] }, "body": {"mode":"raw","raw":"{\n  \"tipo\": \"FIADO\",\n  \"idCliente\": 2,\n  \"items\": [\n    { \"idProducto\": 1, \"cantidad\": 1 }\n  ]\n}"} } },
+      { "name": "Listar Ventas", "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/ventas?inicio=2024-01-01&fin=2024-12-31", "host": ["{{baseUrl}}"], "path": ["ventas"], "query": [{"key":"inicio","value":"2024-01-01"},{"key":"fin","value":"2024-12-31"}] } } },
+      { "name": "Obtener Venta por ID", "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/ventas/1", "host": ["{{baseUrl}}"], "path": ["ventas","1"] } } }
+    ] },
+    { "name": "Pagos Venta", "item": [ { "name": "Registrar Pago de Venta", "request": { "method": "POST", "header": [{"key":"Content-Type","value":"application/json"}], "url": { "raw": "{{baseUrl}}/pagos-venta", "host": ["{{baseUrl}}"], "path": ["pagos-venta"] }, "body": {"mode":"raw","raw":"{\n  \"idVenta\": 1,\n  \"metodo\": \"EFECTIVO\",\n  \"monto\": 50\n}"} } } ] },
+    { "name": "Compras", "item": [
+      { "name": "Registrar Compra", "request": { "method": "POST", "header": [{"key":"Content-Type","value":"application/json"}], "url": { "raw": "{{baseUrl}}/compras", "host": ["{{baseUrl}}"], "path": ["compras"] }, "body": {"mode":"raw","raw":"{\n  \"idProveedor\": 1,\n  \"estado\": \"ABIERTA\",\n  \"items\": [\n    { \"idProducto\": 1, \"cantidad\": 10, \"costoUnitario\": 18.00 }\n  ]\n}"} } },
+      { "name": "Listar Compras", "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/compras?inicio=2024-01-01&fin=2024-12-31", "host": ["{{baseUrl}}"], "path": ["compras"], "query": [{"key":"inicio","value":"2024-01-01"},{"key":"fin","value":"2024-12-31"}] } } },
+      { "name": "Obtener Compra por ID", "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/compras/1", "host": ["{{baseUrl}}"], "path": ["compras","1"] } } }
+    ] },
+    { "name": "Pagos Compra", "item": [ { "name": "Registrar Pago de Compra", "request": { "method": "POST", "header": [{"key":"Content-Type","value":"application/json"}], "url": { "raw": "{{baseUrl}}/pagos-compra", "host": ["{{baseUrl}}"], "path": ["pagos-compra"] }, "body": {"mode":"raw","raw":"{\n  \"idCompra\": 1,\n  \"metodo\": \"TRANSFERENCIA\",\n  \"monto\": 100\n}"} } } ] },
+    { "name": "Mermas", "item": [ { "name": "Registrar Merma", "request": { "method": "POST", "header": [{"key":"Content-Type","value":"application/json"}], "url": { "raw": "{{baseUrl}}/mermas", "host": ["{{baseUrl}}"], "path": ["mermas"] }, "body": {"mode":"raw","raw":"{\n  \"idProducto\": 1,\n  \"idLote\": 1,\n  \"cantidad\": 1,\n  \"motivo\": \"Daño en empaque\"\n}"} } } ] },
+    { "name": "Caducidades", "item": [ { "name": "Por Vencer", "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/caducidades/por-vencer?dias=30", "host": ["{{baseUrl}}"], "path": ["caducidades","por-vencer"], "query": [{"key":"dias","value":"30"}] } } } ] },
+    { "name": "Devoluciones Proveedor", "item": [ { "name": "Registrar Devolución", "request": { "method": "POST", "header": [{"key":"Content-Type","value":"application/json"}], "url": { "raw": "{{baseUrl}}/devoluciones-proveedor", "host": ["{{baseUrl}}"], "path": ["devoluciones-proveedor"] }, "body": {"mode":"raw","raw":"{\n  \"idProveedor\": 1,\n  \"motivo\": \"Producto defectuoso\",\n  \"items\": [ { \"idProducto\": 1, \"cantidad\": 1, \"idLote\": 1 } ]\n}"} } } ] },
+    { "name": "Fiados", "item": [ { "name": "Clientes con Saldo", "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/fiados/clientes", "host": ["{{baseUrl}}"], "path": ["fiados","clientes"] } } }, { "name": "Abonar a Cliente", "request": { "method": "POST", "header": [{"key":"Content-Type","value":"application/json"}], "url": { "raw": "{{baseUrl}}/fiados/abono", "host": ["{{baseUrl}}"], "path": ["fiados","abono"] }, "body": {"mode":"raw","raw":"{\n  \"idCliente\": 2,\n  \"monto\": 100\n}"} } } ] },
+    { "name": "Reportes", "item": [
+      { "name": "Ventas (Resumen)", "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/reportes/ventas?tipo=mensual&fecha=2024-12-01", "host": ["{{baseUrl}}"], "path": ["reportes","ventas"], "query": [{"key":"tipo","value":"mensual"},{"key":"fecha","value":"2024-12-01"}] } } },
+      { "name": "Más Vendidos", "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/reportes/mas-vendidos?tipo=mensual&fecha=2024-12-01", "host": ["{{baseUrl}}"], "path": ["reportes","mas-vendidos"], "query": [{"key":"tipo","value":"mensual"},{"key":"fecha","value":"2024-12-01"}] } } },
+      { "name": "Utilidades", "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/reportes/utilidades?tipo=mensual&fecha=2024-12-01", "host": ["{{baseUrl}}"], "path": ["reportes","utilidades"], "query": [{"key":"tipo","value":"mensual"},{"key":"fecha","value":"2024-12-01"}] } } },
+      { "name": "Exportar CSV (Excel)", "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/reportes/export/excel?tipo=mensual&fecha=2024-12-01", "host": ["{{baseUrl}}"], "path": ["reportes","export","excel"], "query": [{"key":"tipo","value":"mensual"},{"key":"fecha","value":"2024-12-01"}] } } },
+      { "name": "Exportar PDF (Mock)", "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/reportes/export/pdf?tipo=mensual&fecha=2024-12-01", "host": ["{{baseUrl}}"], "path": ["reportes","export","pdf"], "query": [{"key":"tipo","value":"mensual"},{"key":"fecha","value":"2024-12-01"}] } } }
+    ] }
+  ],
+  "event": [
+    { "listen": "test", "script": { "type": "text/javascript", "exec": [
+      "const path='/' + pm.request.url.path.join('/'); const method=pm.request.method; const code=pm.response.code;",
+      "let json=null; try{ json=pm.response.json(); }catch(e){}",
+      "const isArray=v=>Array.isArray(v); const isObject=v=>v&&typeof v==='object'&&!Array.isArray(v);",
+      "if (method==='GET' && path==='/dashboard/summary'){ pm.test('200 OK',()=> pm.response.to.have.status(200)); }",
+      "if (path==='/productos/stock-bajo' && method==='GET'){ pm.test('Stock bajo lista',()=>{ pm.response.to.have.status(200); pm.expect(isArray(json)).to.be.true; }); }",
+      "if (path==='/clientes' && method==='GET'){ pm.test('Clientes lista',()=>{ pm.response.to.have.status(200); pm.expect(isArray(json)).to.be.true; }); }",
+      "if (path==='/proveedores' && method==='GET'){ pm.test('Proveedores lista',()=>{ pm.response.to.have.status(200); pm.expect(isArray(json)).to.be.true; }); }",
+      "if (path==='/ventas' && method==='POST'){ pm.test('Venta 200',()=> pm.response.to.have.status(200)); pm.test('VentaResponse',()=>{ pm.expect(isObject(json)).to.be.true; pm.expect(json).to.have.property('idVenta'); }); }",
+      "if (path==='/ventas' && method==='GET'){ pm.test('Ventas lista',()=>{ pm.response.to.have.status(200); pm.expect(isArray(json)).to.be.true; }); }",
+      "if (path==='/pagos-venta' && method==='POST'){ pm.test('Pago venta 200',()=> pm.response.to.have.status(200)); }",
+      "if (path==='/compras' && method==='POST'){ pm.test('Compra 200',()=> pm.response.to.have.status(200)); }",
+      "if (path==='/compras' && method==='GET'){ pm.test('Compras lista',()=>{ pm.response.to.have.status(200); pm.expect(isArray(json)).to.be.true; }); }",
+      "if (path==='/pagos-compra' && method==='POST'){ pm.test('Pago compra 200',()=> pm.response.to.have.status(200)); }",
+      "if (path==='/mermas' && method==='POST'){ pm.test('Merma 200',()=> pm.response.to.have.status(200)); }",
+      "if (path==='/caducidades/por-vencer' && method==='GET'){ pm.test('Por vencer lista',()=>{ pm.response.to.have.status(200); pm.expect(isArray(json)).to.be.true; }); }",
+      "if (path==='/devoluciones-proveedor' && method==='POST'){ pm.test('Devolución 200',()=> pm.response.to.have.status(200)); }",
+      "if (path==='/fiados/clientes' && method==='GET'){ pm.test('Fiados clientes lista',()=>{ pm.response.to.have.status(200); pm.expect(isArray(json)).to.be.true; }); }",
+      "if (path==='/fiados/abono' && method==='POST'){ pm.test('Abono 200',()=> pm.response.to.have.status(200)); }",
+      "if (path==='/reportes/ventas' && method==='GET'){ pm.test('Reporte ventas 200',()=> pm.response.to.have.status(200)); }",
+      "if (path==='/reportes/mas-vendidos' && method==='GET'){ pm.test('Más vendidos 200',()=> pm.response.to.have.status(200)); }",
+      "if (path==='/reportes/utilidades' && method==='GET'){ pm.test('Utilidades 200',()=> pm.response.to.have.status(200)); }",
+      "if (path==='/reportes/export/excel' && method==='GET'){ pm.test('Export excel 200',()=> pm.response.to.have.status(200)); }",
+      "if (path==='/reportes/export/pdf' && method==='GET'){ pm.test('Export pdf 200',()=> pm.response.to.have.status(200)); }"
+    ] } }
+  ],
+  "auth": { "type": "bearer", "bearer": [ { "key": "token", "value": "{{token}}", "type": "string" } ] }
+}

@@ -1,0 +1,31 @@
+import { requireAuth, setUserUI, logout } from './auth.js';
+import { devolucionesApi } from './api.js';
+
+requireAuth(); setUserUI();
+document.getElementById('btnLogout')?.addEventListener('click', logout);
+
+const tpl = document.getElementById('tplItem'); const items = document.getElementById('items');
+function addItem(){
+  const n = tpl.content.cloneNode(true);
+  n.querySelector('.btn-del').addEventListener('click', (e)=> e.currentTarget.closest('.row').remove());
+  items.appendChild(n);
+}
+document.getElementById('addItem')?.addEventListener('click', addItem);
+if (items && !items.children.length) addItem();
+
+document.getElementById('btnEnviar')?.addEventListener('click', async ()=>{
+  const idProveedor = Number(document.getElementById('idProveedor').value||'0');
+  const motivo = document.getElementById('motivo').value || undefined;
+  const itemsReq = Array.from(items.querySelectorAll('.row')).map(r => ({
+    idProducto: Number(r.querySelector('.idProducto').value),
+    cantidad: Number(r.querySelector('.cantidad').value),
+    idLote: r.querySelector('.idLote').value ? Number(r.querySelector('.idLote').value) : undefined
+  }));
+  const feedback = document.getElementById('feedback');
+  feedback.textContent=''; feedback.className='';
+  try {
+    const res = await devolucionesApi.registrar({ idProveedor, motivo, items: itemsReq });
+    feedback.textContent = `Devolución #${res.id} registrada`; feedback.className='success'; items.innerHTML=''; addItem();
+  } catch (e) { feedback.textContent = e.message; feedback.className='error'; }
+});
+
