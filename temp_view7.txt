@@ -1,4 +1,4 @@
-<!doctype html>
+﻿<!doctype html>
 <html lang="es">
 <head>
   <meta charset="utf-8">
@@ -23,13 +23,13 @@
 
     <div class="panel">
       <div class="toolbar">
-        <label>Días próximos</label>
+        <label>DÃ­as prÃ³ximos</label>
         <input id="dias" type="number" min="0" value="30" style="width:120px" />
         <button id="buscar" class="btn">Buscar</button>
       </div>
       <table class="table mt-2" id="tbl">
         <thead><tr>
-          <th>Código</th><th>Producto</th><th>Vence</th><th>Cantidad</th><th>Estado</th>
+          <th>ID Lote</th><th>CÃ³digo</th><th>Producto</th><th>Vence</th><th>Cantidad</th><th>Estado</th>
         </tr></thead>
         <tbody></tbody>
       </table>
@@ -39,3 +39,4 @@
   <script type="module" src="./js/caducidades.js"></script>
 </body>
 </html>
+

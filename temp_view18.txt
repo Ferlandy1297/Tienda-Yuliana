@@ -1,4 +1,4 @@
-import { requireAuth, setUserUI, logout } from './auth.js';
+﻿import { requireAuth, setUserUI, logout } from './auth.js';
 import { fiadosApi } from './api.js';
 
 requireAuth(); setUserUI();
@@ -10,8 +10,7 @@ async function load(){
   tbody.innerHTML='';
   list.forEach(c => {
     const tr = document.createElement('tr');
-    if (c.idCliente != null) tr.setAttribute('data-id', String(c.idCliente));
-    tr.innerHTML = `<td>${c.nombre}</td><td>${c.saldo}</td><td>${c.bloqueado?'Sí':'No'}</td>
+    tr.innerHTML = `<td>${c.idCliente}</td><td>${c.nombre}</td><td>${c.saldo}</td><td>${c.bloqueado?'SÃ­':'No'}</td>
       <td class="hstack"><input type="number" step="0.01" min="0.01" style="width:120px" placeholder="Monto"/> <button class="btn" data-abono="${c.idCliente}">Abonar</button></td>`;
     tbody.appendChild(tr);
   });
@@ -24,8 +23,9 @@ tbody?.addEventListener('click', async (e)=>{
   if (b.dataset.abono) {
     const montoInput = b.parentElement.querySelector('input');
     const monto = String(Number(montoInput.value||'0'));
-    if (!monto || Number(monto) <= 0) return alert('Monto inválido');
+    if (!monto || Number(monto) <= 0) return alert('Monto invÃ¡lido');
     try { await fiadosApi.abono({ idCliente: Number(b.dataset.abono), monto }); await load(); }
     catch (err) { alert(err.message); }
   }
 });
+

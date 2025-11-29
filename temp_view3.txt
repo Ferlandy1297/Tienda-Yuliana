@@ -1,0 +1,198 @@
+﻿// API base and shared fetch wrapper strictly aligned to backend controllers
+// SecurityConfig exposes endpoints without "/api" prefix. Default Spring Boot port is 8080.
+export const API_BASE = (window.API_BASE_OVERRIDE || "http://localhost:8080").replace(/\/$/, "");
+
+function authHeader() {
+  const token = localStorage.getItem("token");
+  return token ? { Authorization: `Bearer ${token}` } : {};
+}
+
+export async function apiFetch(path, options = {}) {
+  const url = `${API_BASE}${path.startsWith('/') ? path : `/${path}`}`;
+  const defaultHeaders = { 'Content-Type': 'application/json', ...authHeader() };
+  const fetchOpts = {
+    method: 'GET',
+    ...options,
+    headers: { ...defaultHeaders, ...(options.headers || {}) }
+  };
+  const res = await fetch(url, fetchOpts);
+  if (res.status === 401) {
+    // Token invalid/expired â†’ force logout
+    localStorage.removeItem('token');
+    localStorage.removeItem('rol');
+    localStorage.removeItem('username');
+    if (!location.pathname.endsWith('/index.html')) location.href = './index.html';
+    throw new Error('No autorizado');
+  }
+  // For binary (CSV/PDF) callers will use res.blob() directly via separate helper
+  const ct = res.headers.get('Content-Type') || '';
+  if (!res.ok) {
+    let message = `Error ${res.status}`;
+    try {
+      if (ct.includes('application/json')) {
+        const data = await res.json();
+        message = data?.message || JSON.stringify(data);
+      } else {
+        message = await res.text();
+      }
+    } catch (_) {}
+    throw new Error(message || 'Error en la peticiÃ³n');
+  }
+  if (ct.includes('application/json')) return res.json();
+  return res; // allow caller to handle as needed
+}
+
+// Auth
+export function login(username, password) {
+  return apiFetch('/auth/login', {
+    method: 'POST',
+    body: JSON.stringify({ username, password })
+  });
+}
+
+// Dashboard
+export function getDashboardSummary() { return apiFetch('/dashboard/summary'); }
+
+// Productos
+export const productosApi = {
+  listar: () => apiFetch('/productos'),
+  obtener: (id) => apiFetch(`/productos/${id}`),
+  crear: (dto) => apiFetch('/productos', { method: 'POST', body: JSON.stringify(dto) }),
+  actualizar: (id, dto) => apiFetch(`/productos/${id}`, { method: 'PUT', body: JSON.stringify(dto) }),
+  toggle: (id) => apiFetch(`/productos/${id}`, { method: 'DELETE' }),
+  stockBajo: () => apiFetch('/productos/stock-bajo')
+};
+
+// Clientes
+export const clientesApi = {
+  listar: () => apiFetch('/clientes'),
+  crear: (c) => apiFetch('/clientes', { method: 'POST', body: JSON.stringify(c) }),
+  actualizar: (id, c) => apiFetch(`/clientes/${id}`, { method: 'PUT', body: JSON.stringify(c) }),
+  eliminar: (id) => apiFetch(`/clientes/${id}`, { method: 'DELETE' })
+};
+
+// Proveedores
+export const proveedoresApi = {
+  listar: () => apiFetch('/proveedores'),
+  crear: (p) => apiFetch('/proveedores', { method: 'POST', body: JSON.stringify(p) }),
+  actualizar: (id, p) => apiFetch(`/proveedores/${id}`, { method: 'PUT', body: JSON.stringify(p) }),
+  eliminar: (id) => apiFetch(`/proveedores/${id}`, { method: 'DELETE' })
+};
+
+// Ventas
+export const ventasApi = {
+  registrar: (req) => apiFetch('/ventas', { method: 'POST', body: JSON.stringify(req) }),
+  listar: (inicio, fin) => {
+    const q = (inicio && fin) ? `?inicio=${encodeURIComponent(inicio)}&fin=${encodeURIComponent(fin)}` : '';
+    return apiFetch(`/ventas${q}`);
+  },
+  obtener: (id) => apiFetch(`/ventas/${id}`)
+};
+
+export const pagosVentaApi = {
+  pagar: (req) => apiFetch('/pagos-venta', { method: 'POST', body: JSON.stringify(req) })
+};
+
+// Compras
+export const comprasApi = {
+  registrar: (req) => apiFetch('/compras', { method: 'POST', body: JSON.stringify(req) }),
+  listar: (inicio, fin) => {
+    const q = (inicio && fin) ? `?inicio=${encodeURIComponent(inicio)}&fin=${encodeURIComponent(fin)}` : '';
+    return apiFetch(`/compras${q}`);
+  },
+  obtener: (id) => apiFetch(`/compras/${id}`)
+};
+
+export const pagosCompraApi = {
+  pagar: (req) => apiFetch('/pagos-compra', { method: 'POST', body: JSON.stringify(req) })
+};
+
+// Fiados
+export const fiadosApi = {
+  clientes: () => apiFetch('/fiados/clientes'),
+  abono: (req) => apiFetch('/fiados/abono', { method: 'POST', body: JSON.stringify(req) })
+};
+
+// Caducidades
+export const caducidadesApi = {
+  porVencer: (dias = 30) => apiFetch(`/caducidades/por-vencer?dias=${encodeURIComponent(String(dias))}`)
+};
+
+// Mermas
+export const mermasApi = {
+  registrar: (req) => apiFetch('/mermas', { method: 'POST', body: JSON.stringify(req) })
+};
+
+// Devoluciones a proveedor
+export const devolucionesApi = {
+  registrar: (req) => apiFetch('/devoluciones-proveedor', { method: 'POST', body: JSON.stringify(req) })
+};
+
+// Reportes
+export const reportesApi = {
+  ventas: (tipo, fechaISO) => apiFetch(`/reportes/ventas?tipo=${encodeURIComponent(tipo)}&fecha=${encodeURIComponent(fechaISO)}`),
+  masVendidos: (tipo, fechaISO) => apiFetch(`/reportes/mas-vendidos?tipo=${encodeURIComponent(tipo)}&fecha=${encodeURIComponent(fechaISO)}`),
+  utilidades: (tipo, fechaISO) => apiFetch(`/reportes/utilidades?tipo=${encodeURIComponent(tipo)}&fecha=${encodeURIComponent(fechaISO)}`),
+  exportExcel: async (tipo, fechaISO) => {
+    const res = await apiFetch(`/reportes/export/excel?tipo=${encodeURIComponent(tipo)}&fecha=${encodeURIComponent(fechaISO)}`);
+    return res; // Response to be handled as blob by caller (we returned Response if not JSON)
+  },
+  exportPdf: async (tipo, fechaISO) => {
+    const res = await apiFetch(`/reportes/export/pdf?tipo=${encodeURIComponent(tipo)}&fecha=${encodeURIComponent(fechaISO)}`);
+    return res;
+  }
+};
+
+// Tiny download util for blobs (CSV/PDF)
+export async function downloadResponse(res, filename) {
+  const blob = await res.blob();
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = filename; a.click();
+  URL.revokeObjectURL(url);
+}
+
+// Named convenience functions requested, mapped to existing endpoints exactly
+// Auth
+export const loginUser = login;
+
+// Productos
+export function listarProductos() { return productosApi.listar(); }
+export function crearProducto(producto) { return productosApi.crear(producto); }
+export function actualizarProducto(id, producto) { return productosApi.actualizar(id, producto); }
+export function eliminarProducto(id) { return productosApi.toggle(id); }
+export function obtenerProductosStockBajo() { return productosApi.stockBajo(); }
+
+// Ventas
+export function listarVentas(inicio, fin) { return ventasApi.listar(inicio, fin); }
+export function crearVenta(payload) { return ventasApi.registrar(payload); }
+export function obtenerTicketVenta(id) { return ventasApi.obtener(id); }
+export function registrarPagoVenta(payload) { return pagosVentaApi.pagar(payload); }
+
+// Clientes
+export function listarClientes() { return clientesApi.listar(); }
+export function crearCliente(c) { return clientesApi.crear(c); }
+export function actualizarCliente(id, c) { return clientesApi.actualizar(id, c); }
+export function eliminarCliente(id) { return clientesApi.eliminar(id); }
+
+// Proveedores
+export function listarProveedores() { return proveedoresApi.listar(); }
+export function crearProveedor(p) { return proveedoresApi.crear(p); }
+export function actualizarProveedor(id, p) { return proveedoresApi.actualizar(id, p); }
+export function eliminarProveedor(id) { return proveedoresApi.eliminar(id); }
+
+// Compras (usado como reporte bÃ¡sico de compras por rango)
+export function registrarCompra(req) { return comprasApi.registrar(req); }
+export function listarCompras(inicio, fin) { return comprasApi.listar(inicio, fin); }
+export function registrarPagoCompra(req) { return pagosCompraApi.pagar(req); }
+export function obtenerReportesCompras({ inicio, fin } = {}) { return comprasApi.listar(inicio, fin); }
+
+// Reportes de ventas
+export function obtenerReportesVentas({ tipo, fecha }) { return reportesApi.ventas(tipo, fecha); }
+export function obtenerProductosMasVendidos({ tipo, fecha }) { return reportesApi.masVendidos(tipo, fecha); }
+export function obtenerUtilidades({ tipo, fecha }) { return reportesApi.utilidades(tipo, fecha); }
+
+// Caducidades, mermas, devoluciones
+export function obtenerCaducidadesPorVencer(dias) { return caducidadesApi.porVencer(dias); }
+export function registrarMerma(req) { return mermasApi.registrar(req); }
+export function registrarDevolucionProveedor(req) { return devolucionesApi.registrar(req); }

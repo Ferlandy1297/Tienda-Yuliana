@@ -1,0 +1,56 @@
+﻿<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Reportes | Tienda</title>
+  <link rel="stylesheet" href="./css/styles.css">
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h2>Reportes</h2>
+      <div class="nav">
+        <a class="pill" href="./dashboard.html">Dashboard</a>
+        <a class="pill" href="./ventas.html">Ventas</a>
+      </div>
+      <div class="right hstack">
+        <span class="tag">Rol: <span data-rol></span></span>
+        <button id="btnLogout" class="btn btn-outline">Salir</button>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="toolbar">
+        <label>Tipo</label>
+        <select id="tipo"><option>diario</option><option>quincenal</option><option>mensual</option></select>
+        <label>Fecha</label>
+        <input id="fecha" type="date" />
+        <button id="btnConsultar" class="btn">Consultar</button>
+        <button id="btnExcel" class="btn">Exportar CSV</button>
+        <button id="btnPdf" class="btn">Exportar PDF</button>
+      </div>
+      <div id="resVentas" class="mt-2"></div>
+    </div>
+
+    <div class="panel">
+      <h3>MÃ¡s vendidos</h3>
+      <div class="row">
+        <div class="col">
+          <table class="table" id="tblMas"><thead><tr><th>Producto</th><th>Cant.</th><th>Total</th></tr></thead><tbody></tbody></table>
+        </div>
+        <div class="col">
+          <canvas id="chartMasVendidos" height="200"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <h3>Utilidades</h3>
+      <div id="util"></div>
+    </div>
+  </div>
+
+  <script type="module" src="./js/reportes.js"></script>
+</body>
+</html>

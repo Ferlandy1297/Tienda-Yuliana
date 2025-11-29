@@ -1,5 +1,5 @@
-import { requireAuth, setUserUI, logout } from './auth.js';
-import { ventasApi, pagosVentaApi, productosApi, clientesApi } from './api.js';
+﻿import { requireAuth, setUserUI, logout } from './auth.js';
+import { ventasApi, pagosVentaApi, productosApi } from './api.js';
 
 requireAuth(); setUserUI();
 document.getElementById('btnLogout')?.addEventListener('click', logout);
@@ -22,6 +22,7 @@ async function loadProductosCache(){
     mapById = new Map(productosCache.map(p => [String(p.id), p]));
   } catch (e) { console.warn('No se pudo cargar productos', e); }
 }
+loadProductosCache();
 
 function addItem(){
   const node = tpl.content.cloneNode(true);
@@ -37,8 +38,6 @@ function addItem(){
     const prod = mapById.get(String(idInput.value));
     setRowProductInfo(row, prod);
   });
-  // fill products select
-  fillProductosSelect(idInput);
   return row;
 }
 document.getElementById('addItem')?.addEventListener('click', addItem);
@@ -46,9 +45,9 @@ if (items && !items.children.length) addItem();
 
 function setRowProductInfo(row, prod){
   const idInput = row.querySelector('.idProducto');
-  if (idInput && prod?.id) idInput.value = String(prod.id);
+  if (idInput && prod?.id) idInput.value = Number(prod.id);
   const nameEl = row.querySelector('[data-product-name]');
-  if (nameEl) nameEl.textContent = prod ? `${prod.nombre} (${prod.codigoBarras||''})` : '';
+  if (nameEl) nameEl.textContent = prod ? `${prod.nombre} (${prod.codigoBarras})` : '';
   computeTotal();
 }
 
@@ -87,7 +86,7 @@ function renderResults(list){
   list.slice(0, 8).forEach(p => {
     const li = document.createElement('li');
     li.className = 'hstack';
-    li.innerHTML = `<span>${p.nombre}</span> <span class="tag right">${p.codigoBarras||''}</span>`;
+    li.innerHTML = `<span class="tag">${p.id}</span> <span>${p.nombre}</span> <span class="tag right">${p.codigoBarras}</span>`;
     li.addEventListener('click', ()=>{
       // si existe fila, incrementa cantidad; sino crea fila
       const existing = findRowByProductId(p.id);
@@ -160,7 +159,7 @@ document.getElementById('btnVender')?.addEventListener('click', async ()=>{
     idProducto: Number(r.querySelector('.idProducto').value),
     cantidad: Number(r.querySelector('.cantidad').value)
   })).filter(x => x.idProducto && x.cantidad);
-  if (!itemsData.length) { feedback.textContent='Agrega al menos un ítem'; feedback.className='error'; return; }
+  if (!itemsData.length) { feedback.textContent='Agrega al menos un Ã­tem'; feedback.className='error'; return; }
   const req = { tipo, items: itemsData, pago: { metodo, monto: String(monto) } };
   if (idCliente) req.idCliente = idCliente;
   try {
@@ -180,11 +179,9 @@ async function loadHist(){
   tbody.innerHTML='';
   list.forEach(v => {
     const tr = document.createElement('tr');
-    if (v.id != null) tr.setAttribute('data-id', String(v.id));
-    tr.innerHTML = `<td>${v.fechaHora}</td><td>${v.tipo}</td><td>${v.estado}</td><td>${v.total}</td>`;
+    tr.innerHTML = `<td>${v.id}</td><td>${v.fechaHora}</td><td>${v.tipo}</td><td>${v.estado}</td><td>${v.total}</td>`;
     tbody.appendChild(tr);
   });
-  fillVentasSelect(list);
 }
 document.getElementById('btnBuscar')?.addEventListener('click', loadHist);
 loadHist();
@@ -193,7 +190,7 @@ document.getElementById('btnPagarVenta')?.addEventListener('click', async ()=>{
   const pvFeedback = document.getElementById('pvFeedback'); if (!pvFeedback) return;
   pvFeedback.textContent=''; pvFeedback.className='';
   const idVenta = Number(document.getElementById('pvIdVenta').value);
-  if (!idVenta) { pvFeedback.textContent='Selecciona una venta'; pvFeedback.className='error'; return; }
+  if (!idVenta) { pvFeedback.textContent='ID Venta requerido'; pvFeedback.className='error'; return; }
   const metodo = document.getElementById('pvMetodo').value;
   const monto = String(Number(document.getElementById('pvMonto').value||'0'));
   try {
@@ -202,26 +199,3 @@ document.getElementById('btnPagarVenta')?.addEventListener('click', async ()=>{
     loadHist();
   } catch (e) { pvFeedback.textContent = e.message; pvFeedback.className='error'; }
 });
-
-async function fillClientesSelect(){
-  const sel = document.getElementById('idCliente'); if (!sel) return;
-  try { const cs = await clientesApi.listar(); sel.innerHTML = '<option value="">Sin cliente</option>' + cs.map(c=>`<option value="${c.id}">${c.nombre}</option>`).join(''); } catch(_){ }
-}
-
-async function fillProductosSelect(selectEl){
-  try { const prods = productosCache.length ? productosCache : await productosApi.listar();
-    selectEl.innerHTML = '<option value="">Selecciona producto</option>' + prods.map(p=>`<option value="${p.id}">${p.nombre} (${p.codigoBarras||''})</option>`).join('');
-  } catch(_){ }
-}
-
-function fillVentasSelect(list){
-  const sel = document.getElementById('pvIdVenta'); if (!sel) return;
-  sel.innerHTML = '<option value="">Selecciona venta</option>' + (list||[]).map(v=>`<option value="${v.id}">#${v.id} • ${v.fechaHora} • ${v.total}</option>`).join('');
-}
-
-(async function init(){
-  await loadProductosCache();
-  await fillClientesSelect();
-  // fill first row product options
-  const firstSel = items?.querySelector('.idProducto'); if (firstSel) await fillProductosSelect(firstSel);
-})();

@@ -1,4 +1,4 @@
-import { requireAuth, setUserUI, logout } from './auth.js';
+﻿import { requireAuth, setUserUI, logout } from './auth.js';
 import { clientesApi } from './api.js';
 
 requireAuth(); setUserUI();
@@ -13,8 +13,7 @@ async function load(){
   tbody.innerHTML='';
   list.forEach(c => {
     const tr = document.createElement('tr');
-    if (c.id != null) tr.setAttribute('data-id', String(c.id));
-    tr.innerHTML = `<td>${c.nombre}</td><td>${c.telefono||''}</td><td>${c.esMayorista?'Sí':'No'}</td>
+    tr.innerHTML = `<td>${c.id}</td><td>${c.nombre}</td><td>${c.telefono||''}</td><td>${c.esMayorista?'SÃ­':'No'}</td>
     <td class="hstack"><button class="btn" data-edit="${c.id}">Editar</button><button class="btn btn-danger" data-del="${c.id}">Eliminar</button></td>`;
     tbody.appendChild(tr);
   });
@@ -31,7 +30,7 @@ tbody?.addEventListener('click', async (e)=>{
     if (form.elements.limiteCredito) form.elements.limiteCredito.value = c.limiteCredito ?? '';
   }
   if (b.dataset.del) {
-    if (!confirm('¿Eliminar cliente?')) return;
+    if (!confirm('Â¿Eliminar cliente?')) return;
     await clientesApi.eliminar(b.dataset.del); await load();
   }
 });
@@ -46,3 +45,4 @@ form?.addEventListener('submit', async (e)=>{
     feedback.textContent='Guardado'; feedback.className='success'; form.reset(); await load();
   } catch (e2) { feedback.textContent=e2.message; feedback.className='error'; }
 });
+

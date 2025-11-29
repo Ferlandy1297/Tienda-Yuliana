@@ -1,4 +1,4 @@
-<!doctype html>
+﻿<!doctype html>
 <html lang="es">
 <head>
   <meta charset="utf-8">
@@ -30,13 +30,11 @@
           <option value="MAYOREO">MAYOREO</option>
           <option value="FIADO">FIADO</option>
         </select>
-        <label>Cliente (opcional)</label>
-        <select id="idCliente">
-          <option value="">Sin cliente</option>
-        </select>
+        <label>ID Cliente (opcional)</label>
+        <input id="idCliente" type="number" min="1" placeholder="ID cliente (opcional)">
       </div>
       <div class="toolbar mb-2">
-        <label>Código de barras</label>
+        <label>CÃ³digo de barras</label>
         <input id="barcode" placeholder="Escanea o escribe y Enter" style="max-width:260px">
         <button id="addByBarcode" class="btn">Agregar</button>
         <span class="tag">Consejo: Enter para agregar</span>
@@ -44,15 +42,15 @@
       <div class="panel">
         <div class="toolbar">
           <label>Buscar producto</label>
-          <input id="searchName" placeholder="Nombre o código" style="max-width:320px">
+          <input id="searchName" placeholder="Nombre o cÃ³digo" style="max-width:320px">
         </div>
         <ul id="searchResults"></ul>
       </div>
       <div id="items" class="stack"></div>
       <div class="hstack mt-2">
-        <button id="addItem" class="btn">Agregar ítem</button>
+        <button id="addItem" class="btn">Agregar Ã­tem</button>
         <div class="right hstack">
-          <label>Método</label>
+          <label>MÃ©todo</label>
           <select id="metodo">
             <option value="EFECTIVO">EFECTIVO</option>
             <option value="TRANSFERENCIA">TRANSFERENCIA</option>
@@ -78,7 +76,7 @@
       </div>
       <table class="table mt-2" id="tblVentas">
         <thead><tr>
-          <th>Fecha</th><th>Tipo</th><th>Estado</th><th>Total</th>
+          <th>ID</th><th>Fecha</th><th>Tipo</th><th>Estado</th><th>Total</th>
         </tr></thead>
         <tbody></tbody>
       </table>
@@ -87,9 +85,7 @@
     <div class="panel">
       <h3 class="mb-2">Pagar venta existente</h3>
       <div class="hstack">
-        <select id="pvIdVenta">
-          <option value="">Selecciona venta</option>
-        </select>
+        <input id="pvIdVenta" type="number" min="1" placeholder="ID Venta">
         <select id="pvMetodo">
           <option value="EFECTIVO">EFECTIVO</option>
           <option value="TRANSFERENCIA">TRANSFERENCIA</option>
@@ -104,10 +100,8 @@
   <template id="tplItem">
     <div class="row">
       <div class="col">
-        <label>Producto</label>
-        <select class="idProducto" required>
-          <option value="">Selecciona producto</option>
-        </select>
+        <label>ID Producto</label>
+        <input class="idProducto" type="number" min="1" required placeholder="id" />
         <div class="mt-1" data-product-name></div>
       </div>
       <div class="col">

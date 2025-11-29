@@ -1,4 +1,4 @@
-<!doctype html>
+﻿<!doctype html>
 <html lang="es">
 <head>
   <meta charset="utf-8">
@@ -24,18 +24,10 @@
     <div class="panel">
       <h3>Registrar merma</h3>
       <form id="form" class="row">
-        <div class="col"><label>Producto</label>
-          <select name="idProducto" required>
-            <option value="">Selecciona producto</option>
-          </select>
-        </div>
-        <div class="col"><label>Lote (opcional)</label>
-          <select name="idLote">
-            <option value="">Sin lote</option>
-          </select>
-        </div>
+        <div class="col"><label>ID Producto</label><input name="idProducto" type="number" min="1" required></div>
+        <div class="col"><label>ID Lote (opcional)</label><input name="idLote" type="number" min="1"></div>
         <div class="col"><label>Cantidad</label><input name="cantidad" type="number" min="1" value="1" required></div>
-        <div class="col"><label>Motivo</label><input name="motivo" placeholder="dañado, caducado..."></div>
+        <div class="col"><label>Motivo</label><input name="motivo" placeholder="daÃ±ado, caducado..."></div>
         <div class="col" style="align-self:end;"><button class="btn btn-primary">Registrar</button></div>
       </form>
       <div id="feedback" class="mt-2"></div>
@@ -45,3 +37,4 @@
   <script type="module" src="./js/mermas.js"></script>
 </body>
 </html>
+

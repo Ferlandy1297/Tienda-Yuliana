@@ -1,4 +1,4 @@
-<!doctype html>
+﻿<!doctype html>
 <html lang="es">
 <head>
   <meta charset="utf-8">
@@ -30,7 +30,7 @@
           <input name="nombre" required />
         </div>
         <div class="col">
-          <label>Código Barras</label>
+          <label>CÃ³digo Barras</label>
           <input name="codigoBarras" required />
         </div>
         <div class="col">
@@ -42,14 +42,12 @@
           <input type="number" min="0" name="stockActual" required />
         </div>
         <div class="col">
-          <label>Stock Mínimo</label>
+          <label>Stock MÃ­nimo</label>
           <input type="number" min="0" name="stockMinimo" required />
         </div>
         <div class="col">
-          <label>Proveedor</label>
-          <select id="proveedorSelect" name="idProveedor">
-            <option value="">Sin proveedor</option>
-          </select>
+          <label>Proveedor (id)</label>
+          <input type="number" min="1" name="idProveedor" />
         </div>
         <div class="col" style="align-self:end;">
           <button class="btn btn-primary" type="submit">Guardar</button>
@@ -67,7 +65,7 @@
       </div>
       <table class="table mt-2" id="tbl">
         <thead><tr>
-          <th>Nombre</th><th>Código</th><th>Proveedor</th><th>Precio</th><th>Stock</th><th>Mín.</th><th>Activo</th><th>Acciones</th>
+          <th>ID</th><th>Nombre</th><th>CÃ³digo</th><th>Precio</th><th>Stock</th><th>MÃ­n.</th><th>Activo</th><th>Acciones</th>
         </tr></thead>
         <tbody></tbody>
       </table>

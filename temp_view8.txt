@@ -1,5 +1,5 @@
-import { requireAuth, setUserUI, logout } from './auth.js';
-import { comprasApi, pagosCompraApi, proveedoresApi, productosApi } from './api.js';
+﻿import { requireAuth, setUserUI, logout } from './auth.js';
+import { comprasApi, pagosCompraApi } from './api.js';
 
 requireAuth(); setUserUI();
 document.getElementById('btnLogout')?.addEventListener('click', logout);
@@ -10,16 +10,13 @@ function addItem(){
   const node = tpl.content.cloneNode(true);
   node.querySelector('.btn-del').addEventListener('click', (e)=> e.currentTarget.closest('.row').remove());
   cItems.appendChild(node);
-  // populate product select
-  const sel = cItems.lastElementChild?.querySelector('.idProducto');
-  if (sel) fillProductosSelect(sel);
 }
 document.getElementById('cAddItem')?.addEventListener('click', addItem);
 if (cItems && !cItems.children.length) addItem();
 
 document.getElementById('cRegistrar')?.addEventListener('click', async ()=>{
   const cFeedback = document.getElementById('cFeedback'); cFeedback.textContent=''; cFeedback.className='';
-  const idProveedor = Number(document.getElementById('cIdProveedor').value||'0'); if (!idProveedor) { cFeedback.textContent='Proveedor requerido'; cFeedback.className='error'; return; }
+  const idProveedor = Number(document.getElementById('cIdProveedor').value||'0'); if (!idProveedor) { cFeedback.textContent='ID Proveedor requerido'; cFeedback.className='error'; return; }
   const estado = document.getElementById('cEstado').value;
   const items = Array.from(cItems.querySelectorAll('.row')).map(r => ({
     idProducto: Number(r.querySelector('.idProducto').value),
@@ -27,7 +24,7 @@ document.getElementById('cRegistrar')?.addEventListener('click', async ()=>{
     costoUnitario: String(Number(r.querySelector('.costoUnitario').value)),
     fechaVencimiento: r.querySelector('.fechaVencimiento').value || undefined
   }));
-  if (!items.length) { cFeedback.textContent='Agrega ítems'; cFeedback.className='error'; return; }
+  if (!items.length) { cFeedback.textContent='Agrega Ã­tems'; cFeedback.className='error'; return; }
   try {
     const comp = await comprasApi.registrar({ idProveedor, estado, items });
     cFeedback.textContent = `Compra #${comp.id} registrada`; cFeedback.className='success';
@@ -43,19 +40,16 @@ async function loadList(){
   tbody.innerHTML='';
   list.forEach(c => {
     const tr = document.createElement('tr');
-    if (c.id != null) tr.setAttribute('data-id', String(c.id));
-    tr.innerHTML = `<td>${c.fechaHora}</td><td>${c.estado}</td><td>${c.total||''}</td>`;
+    tr.innerHTML = `<td>${c.id}</td><td>${c.fechaHora}</td><td>${c.estado}</td><td>${c.total||''}</td>`;
     tbody.appendChild(tr);
   });
-  // refresh compras select for payments
-  fillComprasSelect(list);
 }
 document.getElementById('btnBuscar')?.addEventListener('click', loadList);
 loadList();
 
 document.getElementById('btnPagarCompra')?.addEventListener('click', async ()=>{
   const pcFeedback = document.getElementById('pcFeedback'); pcFeedback.textContent=''; pcFeedback.className='';
-  const idCompra = Number(document.getElementById('pcIdCompra').value); if (!idCompra) { pcFeedback.textContent='Selecciona compra'; pcFeedback.className='error'; return; }
+  const idCompra = Number(document.getElementById('pcIdCompra').value); if (!idCompra) { pcFeedback.textContent='ID compra requerido'; pcFeedback.className='error'; return; }
   const metodo = document.getElementById('pcMetodo').value;
   const monto = String(Number(document.getElementById('pcMonto').value || '0'));
   try {
@@ -65,24 +59,3 @@ document.getElementById('btnPagarCompra')?.addEventListener('click', async ()=>{
   } catch (e) { pcFeedback.textContent = e.message; pcFeedback.className='error'; }
 });
 
-async function fillProveedoresSelect(){
-  const sel = document.getElementById('cIdProveedor'); if (!sel) return;
-  try { const provs = await proveedoresApi.listar(); sel.innerHTML = '<option value="">Selecciona proveedor</option>' + provs.map(p=>`<option value="${p.id}">${p.nombre}</option>`).join(''); }
-  catch(_){}
-}
-
-async function fillProductosSelect(selectEl){
-  try { const prods = await productosApi.listar(); selectEl.innerHTML = '<option value="">Selecciona producto</option>' + prods.map(p=>`<option value="${p.id}">${p.nombre} (${p.codigoBarras||''})</option>`).join(''); }
-  catch(_){}
-}
-
-function fillComprasSelect(list){
-  const sel = document.getElementById('pcIdCompra'); if (!sel) return;
-  sel.innerHTML = '<option value="">Selecciona compra</option>' + (list||[]).map(c=>`<option value="${c.id}">#${c.id} • ${c.fechaHora} • ${c.estado} • ${c.total||''}</option>`).join('');
-}
-
-(async function init(){
-  await fillProveedoresSelect();
-  // prefill first item select
-  const firstSel = cItems?.querySelector('.idProducto'); if (firstSel) await fillProductosSelect(firstSel);
-})();

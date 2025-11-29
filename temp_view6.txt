@@ -1,4 +1,4 @@
-import { requireAuth, setUserUI, logout } from './auth.js';
+﻿import { requireAuth, setUserUI, logout } from './auth.js';
 import { caducidadesApi } from './api.js';
 
 requireAuth(); setUserUI();
@@ -13,11 +13,11 @@ async function load(){
   lotes.forEach(l => {
     const tr = document.createElement('tr');
     const p = l.producto || {};
-    if (l.id != null) tr.setAttribute('data-id', String(l.id));
-    tr.innerHTML = `<td>${p.codigoBarras||''}</td><td>${p.nombre||''}</td><td>${l.fechaVencimiento||''}</td><td>${l.cantidad||0}</td><td>${l.estado||''}</td>`;
+    tr.innerHTML = `<td>${l.id}</td><td>${p.codigoBarras||''}</td><td>${p.nombre||''}</td><td>${l.fechaVencimiento||''}</td><td>${l.cantidad||0}</td><td>${l.estado||''}</td>`;
     tbody.appendChild(tr);
   });
 }
 
 document.getElementById('buscar')?.addEventListener('click', load);
 load();
+

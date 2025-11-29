@@ -1,0 +1,22 @@
+﻿package com.tienda.controller;
+
+import com.tienda.entity.LoteProducto;
+import com.tienda.repository.LoteProductoRepository;
+import org.springframework.web.bind.annotation.*;
+
+import java.time.LocalDate;
+import java.util.List;
+
+@RestController
+@RequestMapping("/caducidades")
+public class CaducidadesController {
+    private final LoteProductoRepository repo;
+    public CaducidadesController(LoteProductoRepository repo) { this.repo = repo; }
+
+    @GetMapping("/por-vencer")
+    public List<LoteProducto> porVencer(@jakarta.validation.constraints.Min(value = 0, message = "dias debe ser >= 0") @RequestParam(defaultValue = "30") int dias){
+        LocalDate hoy = LocalDate.now();
+        LocalDate fin = hoy.plusDays(dias);
+        return repo.findByFechaVencimientoBetween(hoy, fin);
+    }
+}

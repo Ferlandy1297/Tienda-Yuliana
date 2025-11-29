@@ -1,4 +1,4 @@
-<!doctype html>
+﻿<!doctype html>
 <html lang="es">
 <head>
   <meta charset="utf-8">
@@ -22,14 +22,12 @@
 
     <div class="panel">
       <div class="toolbar">
-        <label>Proveedor</label>
-        <select id="idProveedor">
-          <option value="">Selecciona proveedor</option>
-        </select>
+        <label>ID Proveedor</label>
+        <input id="idProveedor" type="number" min="1">
         <label>Motivo</label>
         <input id="motivo" placeholder="Motivo">
-        <button id="addItem" class="btn">Agregar ítem</button>
-        <button id="btnEnviar" class="btn btn-primary right">Registrar devolución</button>
+        <button id="addItem" class="btn">Agregar Ã­tem</button>
+        <button id="btnEnviar" class="btn btn-primary right">Registrar devoluciÃ³n</button>
       </div>
       <div id="items" class="stack"></div>
       <div id="feedback" class="mt-2"></div>
@@ -38,17 +36,9 @@
 
   <template id="tplItem">
     <div class="row">
-      <div class="col"><label>Producto</label>
-        <select class="idProducto" required>
-          <option value="">Selecciona producto</option>
-        </select>
-      </div>
+      <div class="col"><label>ID Producto</label><input class="idProducto" type="number" min="1" required /></div>
       <div class="col"><label>Cantidad</label><input class="cantidad" type="number" min="1" value="1" required /></div>
-      <div class="col"><label>Lote (opcional)</label>
-        <select class="idLote">
-          <option value="">Sin lote</option>
-        </select>
-      </div>
+      <div class="col"><label>ID Lote (opcional)</label><input class="idLote" type="number" min="1" /></div>
       <div class="col" style="align-self:end;"><button class="btn btn-danger btn-del" type="button">Quitar</button></div>
     </div>
   </template>

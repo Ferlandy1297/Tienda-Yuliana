@@ -1,5 +1,5 @@
-import { requireAuth, setUserUI, logout } from './auth.js';
-import { mermasApi, productosApi } from './api.js';
+﻿import { requireAuth, setUserUI, logout } from './auth.js';
+import { mermasApi } from './api.js';
 
 requireAuth(); setUserUI();
 document.getElementById('btnLogout')?.addEventListener('click', logout);
@@ -25,11 +25,3 @@ form?.addEventListener('submit', async (e) => {
   }
 });
 
-async function fillProductos(){
-  const sel = form?.elements?.idProducto; if (!sel) return;
-  try { const ps = await productosApi.listar(); sel.innerHTML = '<option value="">Selecciona producto</option>' + ps.map(p=>`<option value="${p.id}">${p.nombre} (${p.codigoBarras||''})</option>`).join(''); } catch(_){ }
-}
-
-(async function init(){
-  await fillProductos();
-})();
