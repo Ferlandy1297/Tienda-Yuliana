@@ -86,7 +86,8 @@ export const ventasApi = {
     const q = (inicio && fin) ? `?inicio=${encodeURIComponent(inicio)}&fin=${encodeURIComponent(fin)}` : '';
     return apiFetch(`/ventas${q}`);
   },
-  obtener: (id) => apiFetch(`/ventas/${id}`)
+  obtener: (id) => apiFetch(`/ventas/${id}`),
+  ticket: (id) => apiFetch(`/ventas/${id}/ticket`)
 };
 
 export const pagosVentaApi = {
@@ -115,7 +116,10 @@ export const fiadosApi = {
 
 // Caducidades
 export const caducidadesApi = {
-  porVencer: (dias = 30) => apiFetch(`/caducidades/por-vencer?dias=${encodeURIComponent(String(dias))}`)
+  porVencer: (dias = 30) => apiFetch(`/caducidades/por-vencer?dias=${encodeURIComponent(String(dias))}`),
+  aplicarDescuento: (loteId, dto) => apiFetch(`/caducidades/${encodeURIComponent(String(loteId))}/descuento`, { method: 'POST', body: JSON.stringify(dto) }),
+  donar: (loteId, dto) => apiFetch(`/caducidades/${encodeURIComponent(String(loteId))}/donacion`, { method: 'POST', body: JSON.stringify(dto) }),
+  devolver: (loteId, dto) => apiFetch(`/caducidades/${encodeURIComponent(String(loteId))}/devolver`, { method: 'POST', body: JSON.stringify(dto) })
 };
 
 // Mermas
@@ -140,6 +144,18 @@ export const reportesApi = {
   exportPdf: async (tipo, fechaISO) => {
     const res = await apiFetch(`/reportes/export/pdf?tipo=${encodeURIComponent(tipo)}&fecha=${encodeURIComponent(fechaISO)}`);
     return res;
+  },
+  compras: (inicioISO, finISO, proveedorId) => {
+    const q = `?inicio=${encodeURIComponent(inicioISO)}&fin=${encodeURIComponent(finISO)}${proveedorId?`&idProveedor=${encodeURIComponent(String(proveedorId))}`:''}`;
+    return apiFetch(`/reportes/compras${q}`);
+  },
+  comprasCsv: async (inicioISO, finISO, proveedorId) => {
+    const q = `?inicio=${encodeURIComponent(inicioISO)}&fin=${encodeURIComponent(finISO)}${proveedorId?`&idProveedor=${encodeURIComponent(String(proveedorId))}`:''}`;
+    return apiFetch(`/reportes/compras/export/csv${q}`);
+  },
+  comprasPdf: async (inicioISO, finISO, proveedorId) => {
+    const q = `?inicio=${encodeURIComponent(inicioISO)}&fin=${encodeURIComponent(finISO)}${proveedorId?`&idProveedor=${encodeURIComponent(String(proveedorId))}`:''}`;
+    return apiFetch(`/reportes/compras/export/pdf${q}`);
   }
 };
 
@@ -166,7 +182,7 @@ export function obtenerProductosStockBajo() { return productosApi.stockBajo(); }
 // Ventas
 export function listarVentas(inicio, fin) { return ventasApi.listar(inicio, fin); }
 export function crearVenta(payload) { return ventasApi.registrar(payload); }
-export function obtenerTicketVenta(id) { return ventasApi.obtener(id); }
+export function obtenerTicketVenta(id) { return ventasApi.ticket(id); }
 export function registrarPagoVenta(payload) { return pagosVentaApi.pagar(payload); }
 
 // Clientes

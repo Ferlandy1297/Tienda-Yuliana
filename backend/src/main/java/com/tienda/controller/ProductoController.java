@@ -3,6 +3,7 @@ package com.tienda.controller;
 import com.tienda.dto.ProductoDTO;
 import com.tienda.entity.Producto;
 import com.tienda.service.ProductoService;
+import com.tienda.service.StockAlertService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -13,9 +14,11 @@ import java.util.List;
 @RequestMapping("/productos")
 public class ProductoController {
     private final ProductoService productoService;
+    private final StockAlertService stockAlertService;
 
-    public ProductoController(ProductoService productoService) {
+    public ProductoController(ProductoService productoService, StockAlertService stockAlertService) {
         this.productoService = productoService;
+        this.stockAlertService = stockAlertService;
     }
 
     @GetMapping
@@ -40,4 +43,13 @@ public class ProductoController {
 
     @GetMapping("/stock-bajo")
     public List<Producto> stockBajo() { return productoService.stockBajo(); }
+
+    // Opcional: disparar correo de alerta stock bajo (ADMIN/SUPERVISOR)
+    @PostMapping("/stock-bajo/alerta-email")
+    @org.springframework.security.access.prepost.PreAuthorize("hasAnyRole('ADMIN','SUPERVISOR')")
+    public org.springframework.http.ResponseEntity<Void> enviarAlerta(@RequestParam(required = false) String to) {
+        List<Producto> low = productoService.stockBajo();
+        stockAlertService.enviarAlertaStockBajo(low, to);
+        return org.springframework.http.ResponseEntity.accepted().build();
+    }
 }

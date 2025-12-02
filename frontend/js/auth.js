@@ -17,6 +17,11 @@ export function setUserUI() {
   const elR = document.querySelector('[data-rol]');
   if (elU) elU.textContent = u || '';
   if (elR) elR.textContent = r || '';
+  // Hide UI elements based on required roles, if any
+  document.querySelectorAll('[data-requires-role]')?.forEach(el => {
+    const allowed = (el.getAttribute('data-requires-role') || '').split(',').map(s => s.trim()).filter(Boolean);
+    if (allowed.length && !allowed.includes(r)) el.classList.add('hidden');
+  });
 }
 
 export function logout() {
@@ -55,5 +60,10 @@ export function guardByRole(roles /* array of strings */) {
       if (allowed.length && !allowed.includes(r)) el.classList.add('hidden');
     });
   }
+}
+
+export function hasRole(role) {
+  const r = localStorage.getItem('rol');
+  return r === role || (Array.isArray(role) && role.includes(r));
 }
 

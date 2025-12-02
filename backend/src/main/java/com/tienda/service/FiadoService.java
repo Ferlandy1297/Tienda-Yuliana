@@ -63,5 +63,31 @@ public class FiadoService {
         dto.setSaldo(nuevo);
         return dto;
     }
+
+    // Marca clientes bloqueados si saldo > límite o sin abonos por N días con saldo pendiente
+    @org.springframework.transaction.annotation.Transactional
+    public int evaluarMorosidad(int dias) {
+        java.time.LocalDateTime limite = java.time.LocalDateTime.now().minusDays(Math.max(dias, 0));
+        int afectados = 0;
+        for (Cliente c : clienteRepository.findAll()) {
+            CuentaCorrienteCliente cuenta = cuentaRepository.findByCliente(c).orElse(null);
+            java.math.BigDecimal saldo = cuenta == null ? java.math.BigDecimal.ZERO : cuenta.getSaldoActual();
+            boolean excedeLimite = c.getLimiteCredito() != null && saldo.compareTo(c.getLimiteCredito()) > 0;
+            boolean diasSinAbono = false;
+            if (saldo.compareTo(java.math.BigDecimal.ZERO) > 0) {
+                // último abono
+                java.util.Optional<MovimientoCuentaCorriente> ult = movRepository.findAll().stream()
+                        .filter(m -> m.getCuenta()!=null && cuenta!=null && m.getCuenta().getId().equals(cuenta.getId()))
+                        .filter(m -> "ABONO".equalsIgnoreCase(m.getTipo()))
+                        .max(java.util.Comparator.comparing(MovimientoCuentaCorriente::getFecha));
+                diasSinAbono = ult.map(m -> m.getFecha().isBefore(limite)).orElse(true);
+            }
+            boolean bloquear = excedeLimite || diasSinAbono;
+            if (bloquear != c.isEstaBloqueado()) {
+                c.setEstaBloqueado(bloquear); clienteRepository.save(c); afectados++;
+            }
+        }
+        return afectados;
+    }
 }
 

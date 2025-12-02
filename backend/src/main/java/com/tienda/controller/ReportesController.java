@@ -57,15 +57,115 @@ public class ReportesController {
     }
 
     @GetMapping("/export/pdf")
-    public org.springframework.http.ResponseEntity<byte[]> exportPdfMock(@RequestParam String tipo,
-                                                                         @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fecha) {
+    public org.springframework.http.ResponseEntity<byte[]> exportPdfVentas(@RequestParam String tipo,
+                                                                           @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fecha) {
         LocalDate[] range = rango(tipo, fecha);
-        String txt = "Reporte de ventas (mock PDF)\\n" + "Tipo: " + tipo + "\\n" + "Desde: " + range[0] + " Hasta: " + range[1] + "\\n";
-        byte[] bytes = txt.getBytes(java.nio.charset.StandardCharsets.UTF_8);
+        List<Venta> ventas = ventaRepository.findByFechaHoraBetween(range[0].atStartOfDay(), range[1].atTime(LocalTime.MAX));
+        byte[] bytes = generarPdfVentas(range[0], range[1], ventas);
         return org.springframework.http.ResponseEntity.ok()
-                .header("Content-Disposition", "attachment; filename=reporte.pdf")
-                .header("Content-Type", "application/octet-stream")
+                .header("Content-Disposition", "attachment; filename=ventas.pdf")
+                .header("Content-Type", "application/pdf")
                 .body(bytes);
+    }
+
+    private byte[] generarPdfVentas(LocalDate inicio, LocalDate fin, List<Venta> ventas) {
+        try (java.io.ByteArrayOutputStream baos = new java.io.ByteArrayOutputStream()) {
+            com.lowagie.text.Document doc = new com.lowagie.text.Document();
+            com.lowagie.text.pdf.PdfWriter.getInstance(doc, baos);
+            doc.open();
+            doc.add(new com.lowagie.text.Paragraph("Reporte de Ventas"));
+            doc.add(new com.lowagie.text.Paragraph("Periodo: "+inicio+" a "+fin));
+            doc.add(new com.lowagie.text.Paragraph(" "));
+            com.lowagie.text.pdf.PdfPTable table = new com.lowagie.text.pdf.PdfPTable(3);
+            table.addCell("ID"); table.addCell("Fecha"); table.addCell("Total");
+            java.math.BigDecimal acc = java.math.BigDecimal.ZERO;
+            for (Venta v : ventas) {
+                table.addCell(String.valueOf(v.getId()));
+                table.addCell(String.valueOf(v.getFechaHora()));
+                table.addCell(String.valueOf(v.getTotal()));
+                if (v.getTotal()!=null) acc = acc.add(v.getTotal());
+            }
+            doc.add(table);
+            doc.add(new com.lowagie.text.Paragraph(" "));
+            doc.add(new com.lowagie.text.Paragraph("Total ventas: "+acc));
+            doc.close();
+            return baos.toByteArray();
+        } catch (Exception e) {
+            throw new RuntimeException("Error generando PDF", e);
+        }
+    }
+
+    // Reporte de compras por periodo y proveedor
+    @GetMapping("/compras")
+    public Map<String, Object> reporteCompras(@RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate inicio,
+                                              @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fin,
+                                              @RequestParam(required = false) Long idProveedor) {
+        List<Compra> compras = compraRepository.findByFechaHoraBetween(inicio.atStartOfDay(), fin.atTime(LocalTime.MAX));
+        if (idProveedor != null) {
+            compras = compras.stream().filter(c -> c.getProveedor()!=null && idProveedor.equals(c.getProveedor().getId())).toList();
+        }
+        java.math.BigDecimal total = compras.stream().map(Compra::getTotal).filter(java.util.Objects::nonNull).reduce(java.math.BigDecimal.ZERO, java.math.BigDecimal::add);
+        Map<String,Object> res = new HashMap<>();
+        res.put("inicio", inicio);
+        res.put("fin", fin);
+        res.put("idProveedor", idProveedor);
+        res.put("total", total);
+        res.put("transacciones", compras.size());
+        return res;
+    }
+
+    @GetMapping("/compras/export/csv")
+    public org.springframework.http.ResponseEntity<byte[]> exportComprasCsv(@RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate inicio,
+                                                                            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fin,
+                                                                            @RequestParam(required = false) Long idProveedor) {
+        List<Compra> compras = compraRepository.findByFechaHoraBetween(inicio.atStartOfDay(), fin.atTime(LocalTime.MAX));
+        if (idProveedor != null) compras = compras.stream().filter(c -> c.getProveedor()!=null && idProveedor.equals(c.getProveedor().getId())).toList();
+        StringBuilder csv = new StringBuilder("id,fecha,proveedor,total\n");
+        compras.forEach(c -> csv.append(c.getId()).append(',').append(c.getFechaHora()).append(',')
+                .append(c.getProveedor()!=null? c.getProveedor().getNombre(): "").append(',')
+                .append(c.getTotal()).append('\n'));
+        byte[] bytes = csv.toString().getBytes(java.nio.charset.StandardCharsets.UTF_8);
+        return org.springframework.http.ResponseEntity.ok()
+                .header("Content-Disposition", "attachment; filename=compras.csv")
+                .header("Content-Type", "text/csv; charset=utf-8")
+                .body(bytes);
+    }
+
+    @GetMapping("/compras/export/pdf")
+    public org.springframework.http.ResponseEntity<byte[]> exportComprasPdf(@RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate inicio,
+                                                                            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fin,
+                                                                            @RequestParam(required = false) Long idProveedor) {
+        List<Compra> compras = compraRepository.findByFechaHoraBetween(inicio.atStartOfDay(), fin.atTime(LocalTime.MAX));
+        if (idProveedor != null) compras = compras.stream().filter(c -> c.getProveedor()!=null && idProveedor.equals(c.getProveedor().getId())).toList();
+        try (java.io.ByteArrayOutputStream baos = new java.io.ByteArrayOutputStream()) {
+            com.lowagie.text.Document doc = new com.lowagie.text.Document();
+            com.lowagie.text.pdf.PdfWriter.getInstance(doc, baos);
+            doc.open();
+            doc.add(new com.lowagie.text.Paragraph("Reporte de Compras"));
+            doc.add(new com.lowagie.text.Paragraph("Periodo: "+inicio+" a "+fin));
+            if (idProveedor != null) doc.add(new com.lowagie.text.Paragraph("Proveedor: "+idProveedor));
+            doc.add(new com.lowagie.text.Paragraph(" "));
+            com.lowagie.text.pdf.PdfPTable table = new com.lowagie.text.pdf.PdfPTable(4);
+            table.addCell("ID"); table.addCell("Fecha"); table.addCell("Proveedor"); table.addCell("Total");
+            java.math.BigDecimal acc = java.math.BigDecimal.ZERO;
+            for (Compra c : compras) {
+                table.addCell(String.valueOf(c.getId()));
+                table.addCell(String.valueOf(c.getFechaHora()));
+                table.addCell(c.getProveedor()!=null? c.getProveedor().getNombre(): "");
+                table.addCell(String.valueOf(c.getTotal()));
+                if (c.getTotal()!=null) acc = acc.add(c.getTotal());
+            }
+            doc.add(table);
+            doc.add(new com.lowagie.text.Paragraph(" "));
+            doc.add(new com.lowagie.text.Paragraph("Total compras: "+acc));
+            doc.close();
+            return org.springframework.http.ResponseEntity.ok()
+                    .header("Content-Disposition", "attachment; filename=compras.pdf")
+                    .header("Content-Type", "application/pdf")
+                    .body(baos.toByteArray());
+        } catch (Exception e) {
+            throw new RuntimeException("Error generando PDF", e);
+        }
     }
 
     @GetMapping("/mas-vendidos")

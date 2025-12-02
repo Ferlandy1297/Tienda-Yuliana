@@ -20,15 +20,15 @@
       </div>
     </div>
 
-    <div class="panel">
+  <div class="panel">
       <div class="toolbar">
         <label>Tipo</label>
         <select id="tipo"><option>diario</option><option>quincenal</option><option>mensual</option></select>
         <label>Fecha</label>
         <input id="fecha" type="date" />
-        <button id="btnConsultar" class="btn">Consultar</button>
-        <button id="btnExcel" class="btn">Exportar CSV</button>
-        <button id="btnPdf" class="btn">Exportar PDF</button>
+        <button id="btnConsultar" class="btn" data-requires-role="ADMIN,SUPERVISOR">Consultar</button>
+        <button id="btnExcel" class="btn" data-requires-role="ADMIN,SUPERVISOR">Exportar CSV</button>
+        <button id="btnPdf" class="btn" data-requires-role="ADMIN,SUPERVISOR">Exportar PDF</button>
       </div>
       <div id="resVentas" class="mt-2"></div>
     </div>
@@ -48,6 +48,20 @@
     <div class="panel">
       <h3>Utilidades</h3>
       <div id="util"></div>
+    </div>
+
+    <div class="panel" data-requires-role="ADMIN,SUPERVISOR">
+      <h3>Reporte de Compras</h3>
+      <div class="toolbar">
+        <label>Inicio</label><input id="cInicio" type="date" />
+        <label>Fin</label><input id="cFin" type="date" />
+        <label>Proveedor</label>
+        <select id="cProveedor"><option value="">Todos</option></select>
+        <button id="btnComprasConsultar" class="btn">Consultar</button>
+        <button id="btnComprasCsv" class="btn">CSV</button>
+        <button id="btnComprasPdf" class="btn">PDF</button>
+      </div>
+      <div id="resCompras" class="mt-2"></div>
     </div>
   </div>
 

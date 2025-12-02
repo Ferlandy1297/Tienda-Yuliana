@@ -147,4 +147,32 @@ public class VentaService {
         resp.setCambio(cambio);
         return resp;
     }
+
+    public VentaDtos.VentaTicket obtenerTicket(Long idVenta) {
+        Venta venta = ventaRepository.findById(idVenta)
+                .orElseThrow(() -> new IllegalArgumentException("Venta no encontrada"));
+        VentaDtos.VentaTicket t = new VentaDtos.VentaTicket();
+        t.setIdVenta(venta.getId());
+        t.setFechaHora(venta.getFechaHora());
+        t.setCliente(venta.getCliente() != null ? venta.getCliente().getNombre() : "MOSTRADOR");
+        t.setAtendio(venta.getUsuario() != null ? venta.getUsuario().getUsername() : "");
+        java.util.List<VentaDtos.TicketItem> items = new java.util.ArrayList<>();
+        for (VentaDetalle d : venta.getDetalles()) {
+            VentaDtos.TicketItem ti = new VentaDtos.TicketItem();
+            ti.setProducto(d.getProducto() != null ? d.getProducto().getNombre() : "");
+            ti.setCantidad(d.getCantidad());
+            ti.setPrecioUnitario(d.getPrecioUnitario());
+            ti.setSubtotal(d.getSubtotal());
+            items.add(ti);
+        }
+        t.setItems(items);
+        t.setTotal(venta.getTotal());
+        if (!venta.getPagos().isEmpty()) {
+            PagoVenta pv = venta.getPagos().get(0);
+            t.setMetodoPago(pv.getMetodo());
+            t.setMontoPagado(pv.getMontoPagado());
+            t.setCambio(pv.getCambio());
+        }
+        return t;
+    }
 }

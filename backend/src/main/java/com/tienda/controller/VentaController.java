@@ -45,4 +45,14 @@ public class VentaController {
     public ResponseEntity<Venta> obtener(@PathVariable Long id) {
         return ventaRepository.findById(id).map(ResponseEntity::ok).orElse(ResponseEntity.notFound().build());
     }
+
+    // CU-TY-003: Ticket de venta
+    @GetMapping("/{id}/ticket")
+    public ResponseEntity<VentaDtos.VentaTicket> ticket(@PathVariable Long id) {
+        try {
+            return ResponseEntity.ok(ventaService.obtenerTicket(id));
+        } catch (IllegalArgumentException ex) {
+            return ResponseEntity.notFound().build();
+        }
+    }
 }

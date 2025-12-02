@@ -25,6 +25,9 @@ public class DevolucionService {
     @Transactional
     public DevolucionProveedor devolver(Long idProveedor, String motivo, List<ItemDevolucion> items){
         Proveedor prov = proveedorRepository.findById(idProveedor).orElseThrow(() -> new IllegalArgumentException("Proveedor no encontrado"));
+        if (!prov.isEsNacional()) {
+            throw new IllegalArgumentException("Devolución permitida solo a proveedores nacionales");
+        }
         DevolucionProveedor dev = new DevolucionProveedor();
         dev.setProveedor(prov);
         dev.setMotivo(motivo);

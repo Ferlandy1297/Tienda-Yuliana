@@ -1,5 +1,5 @@
 import { requireAuth, setUserUI, logout } from './auth.js';
-import { reportesApi, downloadResponse } from './api.js';
+import { reportesApi, downloadResponse, proveedoresApi } from './api.js';
 
 requireAuth(); setUserUI();
 document.getElementById('btnLogout')?.addEventListener('click', logout);
@@ -74,4 +74,42 @@ document.getElementById('btnExcel')?.addEventListener('click', async ()=>{
 document.getElementById('btnPdf')?.addEventListener('click', async ()=>{
   const tipo = document.getElementById('tipo').value; const fecha = document.getElementById('fecha').value;
   const res = await reportesApi.exportPdf(tipo, fecha); await downloadResponse(res, 'reporte.pdf');
+});
+
+// Compras
+function dateISO(d){ return d.toISOString().slice(0,10); }
+const cIni = document.getElementById('cInicio'); const cFin = document.getElementById('cFin');
+if (cIni && cFin) { const now = new Date(); cIni.value = dateISO(new Date(now.getFullYear(), now.getMonth(), 1)); cFin.value = dateISO(now); }
+
+async function fillProveedores(){
+  const sel = document.getElementById('cProveedor'); if (!sel) return;
+  try { const list = await proveedoresApi.listar(); sel.innerHTML = '<option value="">Todos</option>' + list.map(p=>`<option value="${p.id}">${p.nombre}</option>`).join(''); } catch(_){ }
+}
+fillProveedores();
+
+async function consultarCompras(){
+  const inicio = document.getElementById('cInicio').value; const fin = document.getElementById('cFin').value;
+  const idProveedor = document.getElementById('cProveedor').value || undefined;
+  if (!inicio || !fin) return;
+  const rpt = await reportesApi.compras(inicio, fin, idProveedor);
+  const el = document.getElementById('resCompras');
+  el.innerHTML = `<div class="metric-grid">
+    <div class="metric"><h3>Periodo</h3><div class="value">${rpt.inicio}  ${rpt.fin}</div></div>
+    <div class="metric"><h3>Total compras</h3><div class="value">${rpt.total}</div></div>
+    <div class="metric"><h3>Transacciones</h3><div class="value">${rpt.transacciones}</div></div>
+  </div>`;
+}
+
+document.getElementById('btnComprasConsultar')?.addEventListener('click', consultarCompras);
+document.getElementById('btnComprasCsv')?.addEventListener('click', async ()=>{
+  const inicio = document.getElementById('cInicio').value; const fin = document.getElementById('cFin').value;
+  const idProveedor = document.getElementById('cProveedor').value || undefined;
+  if (!inicio || !fin) return;
+  const res = await reportesApi.comprasCsv(inicio, fin, idProveedor); await downloadResponse(res, 'compras.csv');
+});
+document.getElementById('btnComprasPdf')?.addEventListener('click', async ()=>{
+  const inicio = document.getElementById('cInicio').value; const fin = document.getElementById('cFin').value;
+  const idProveedor = document.getElementById('cProveedor').value || undefined;
+  if (!inicio || !fin) return;
+  const res = await reportesApi.comprasPdf(inicio, fin, idProveedor); await downloadResponse(res, 'compras.pdf');
 });

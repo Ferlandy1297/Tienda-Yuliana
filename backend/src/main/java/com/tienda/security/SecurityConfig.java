@@ -59,11 +59,19 @@ public class SecurityConfig {
                         .requestMatchers("/productos/**").hasAnyRole("ADMIN","SUPERVISOR")
                         .requestMatchers(HttpMethod.GET, "/clientes/**", "/proveedores/**").hasAnyRole("ADMIN","EMPLEADO","SUPERVISOR")
                         .requestMatchers("/clientes/**", "/proveedores/**").hasAnyRole("ADMIN","SUPERVISOR")
-                        .requestMatchers("/ventas/**", "/pagos-venta/**", "/reportes/**", 
-                                        "/compras/**", "/pagos-compra/**", 
-                                        "/mermas/**", "/caducidades/**", 
-                                        "/devoluciones-proveedor/**", "/fiados/**")
-                            .hasAnyRole("ADMIN","EMPLEADO","SUPERVISOR")
+                        // Ventas y pagos de venta: ADMIN/EMPLEADO/SUPERVISOR
+                        .requestMatchers("/ventas/**", "/pagos-venta/**").hasAnyRole("ADMIN","EMPLEADO","SUPERVISOR")
+                        // Reportes: ADMIN y SUPERVISOR
+                        .requestMatchers("/reportes/**").hasAnyRole("ADMIN","SUPERVISOR")
+                        // Compras y pagos-compra: ADMIN y SUPERVISOR
+                        .requestMatchers("/compras/**", "/pagos-compra/**").hasAnyRole("ADMIN","SUPERVISOR")
+                        // Mermas y devoluciones a proveedor: ADMIN y SUPERVISOR
+                        .requestMatchers("/mermas/**", "/devoluciones-proveedor/**").hasAnyRole("ADMIN","SUPERVISOR")
+                        // Caducidades: lectura para todos roles autenticados; acciones quedan protegidas por rutas POST específicas
+                        .requestMatchers(HttpMethod.GET, "/caducidades/**").hasAnyRole("ADMIN","EMPLEADO","SUPERVISOR")
+                        .requestMatchers(HttpMethod.POST, "/caducidades/**").hasAnyRole("ADMIN","SUPERVISOR")
+                        // Fiados: visualización para ADMIN/EMPLEADO/SUPERVISOR
+                        .requestMatchers("/fiados/**").hasAnyRole("ADMIN","EMPLEADO","SUPERVISOR")
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
