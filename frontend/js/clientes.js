@@ -23,6 +23,7 @@ async function load(){
     const can = hasRole(['ADMIN','SUPERVISOR']);
     if (!can) {
       tbody.querySelectorAll('button[data-edit], button[data-del]').forEach(btn => btn.remove());
+      try { document.querySelector('#tbl thead th:last-child')?.classList.add('hidden'); } catch(_) {}
     }
   } catch (_) {}
 }

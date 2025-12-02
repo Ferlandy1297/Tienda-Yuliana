@@ -33,6 +33,7 @@ async function load(listFn = productosApi.listar){
   if (!hasRole(['ADMIN','SUPERVISOR'])) {
     tbody.querySelectorAll('button[data-edit], button[data-toggle]')
       .forEach(btn => btn.remove());
+    try { document.querySelector('#tbl thead th:last-child')?.classList.add('hidden'); } catch(_) {}
   }
 }
 
