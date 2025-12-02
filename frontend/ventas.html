@@ -21,7 +21,7 @@
       </div>
     </div>
 
-    <div class="panel">
+  <div class="panel">
       <h3 class="mb-2">Registrar venta</h3>
       <div class="toolbar mb-2">
         <label>Tipo</label>
@@ -99,6 +99,17 @@
       </div>
       <div id="pvFeedback" class="mt-2"></div>
     </div>
+  </div>
+
+  <div class="panel">
+    <h3 class="mb-2">Ticket de venta</h3>
+    <div class="toolbar">
+      <label>ID Venta</label>
+      <input id="tIdVenta" type="number" min="1" style="max-width:120px" placeholder="#" />
+      <button id="btnVerTicket" class="btn">Ver Ticket</button>
+      <button id="btnImprimirTicket" class="btn">Imprimir</button>
+    </div>
+    <div id="ticketView" class="ticket mt-2" style="background:#fff; padding:12px; max-width:380px"></div>
   </div>
 
   <template id="tplItem">

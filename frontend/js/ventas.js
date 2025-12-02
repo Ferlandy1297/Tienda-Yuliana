@@ -1,5 +1,5 @@
 import { requireAuth, setUserUI, logout } from './auth.js';
-import { ventasApi, pagosVentaApi, productosApi, clientesApi } from './api.js';
+import { ventasApi, pagosVentaApi, productosApi, clientesApi, fiadosApi } from './api.js';
 
 requireAuth(); setUserUI();
 document.getElementById('btnLogout')?.addEventListener('click', logout);
@@ -161,6 +161,14 @@ document.getElementById('btnVender')?.addEventListener('click', async ()=>{
     cantidad: Number(r.querySelector('.cantidad').value)
   })).filter(x => x.idProducto && x.cantidad);
   if (!itemsData.length) { feedback.textContent='Agrega al menos un ítem'; feedback.className='error'; return; }
+  // Evita FIADO si cliente bloqueado
+  if (tipo === 'FIADO' && idCliente) {
+    try {
+      const clientes = await fiadosApi.clientes();
+      const cli = clientes.find(c => String(c.idCliente) === String(idCliente));
+      if (cli?.bloqueado) { feedback.textContent = 'Cliente bloqueado por morosidad'; feedback.className='error'; return; }
+    } catch (_) {}
+  }
   const req = { tipo, items: itemsData, pago: { metodo, monto: String(monto) } };
   if (idCliente) req.idCliente = idCliente;
   try {
@@ -169,6 +177,12 @@ document.getElementById('btnVender')?.addEventListener('click', async ()=>{
     items.innerHTML=''; addItem();
     document.getElementById('monto').value = '0';
     loadHist();
+    // Render ticket
+    try {
+      const t = await ventasApi.ticket(res.idVenta);
+      document.getElementById('tIdVenta').value = String(res.idVenta);
+      renderTicket(t);
+    } catch(_){ }
   } catch (e) { feedback.textContent = e.message; feedback.className='error'; }
 });
 
@@ -225,3 +239,31 @@ function fillVentasSelect(list){
   // fill first row product options
   const firstSel = items?.querySelector('.idProducto'); if (firstSel) await fillProductosSelect(firstSel);
 })();
+
+// Ticket UI
+function renderTicket(t) {
+  const el = document.getElementById('ticketView'); if (!el) return;
+  if (!t) { el.innerHTML = ''; return; }
+  const itemsHtml = (t.items||[]).map(i => `<div class="hstack"><span>${i.producto} x${i.cantidad}</span><span class="right">${i.subtotal}</span></div>`).join('');
+  el.innerHTML = `
+    <div style="text-align:center"><strong>Tienda Yuliana</strong><br/><small>Ticket #${t.idVenta}</small><br/><small>${t.fechaHora||''}</small></div>
+    <hr/>
+    <div><small>Cliente:</small> ${t.cliente||'MOSTRADOR'}</div>
+    <div><small>Atendió:</small> ${t.atendio||''}</div>
+    <hr/>
+    ${itemsHtml}
+    <hr/>
+    <div class="hstack"><strong>Total</strong><strong class="right">${t.total}</strong></div>
+    ${t.metodoPago? `<div class="hstack"><span>${t.metodoPago}</span><span class="right">${t.montoPagado||''}</span></div>`:''}
+    ${t.cambio? `<div class="hstack"><span>Cambio</span><span class="right">${t.cambio}</span></div>`:''}
+  `;
+}
+
+document.getElementById('btnVerTicket')?.addEventListener('click', async ()=>{
+  const id = Number(document.getElementById('tIdVenta').value||'0'); if (!id) return;
+  try { const t = await ventasApi.ticket(id); renderTicket(t); } catch (e) { alert(e.message); }
+});
+
+document.getElementById('btnImprimirTicket')?.addEventListener('click', ()=>{
+  window.print();
+});

@@ -21,6 +21,7 @@ public class MermasController {
     }
 
     @PostMapping
+    @org.springframework.security.access.prepost.PreAuthorize("hasAnyRole('ADMIN','SUPERVISOR')")
     public Merma registrar(@jakarta.validation.Valid @RequestBody MermaRequest req){
         return mermaService.registrarMerma(req.idProducto, req.idLote, req.cantidad, req.motivo);
     }

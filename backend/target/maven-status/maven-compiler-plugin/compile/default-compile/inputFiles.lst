@@ -53,6 +53,7 @@ C:\Users\Hp\Desktop\Tienda Yuliana\backend\src\main\java\com\tienda\controller\F
 C:\Users\Hp\Desktop\Tienda Yuliana\backend\src\main\java\com\tienda\entity\Producto.java
 C:\Users\Hp\Desktop\Tienda Yuliana\backend\src\main\java\com\tienda\controller\CaducidadesController.java
 C:\Users\Hp\Desktop\Tienda Yuliana\backend\src\main\java\com\tienda\repository\MermaRepository.java
+C:\Users\Hp\Desktop\Tienda Yuliana\backend\src\main\java\com\tienda\service\StockAlertService.java
 C:\Users\Hp\Desktop\Tienda Yuliana\backend\src\main\java\com\tienda\controller\ComprasController.java
 C:\Users\Hp\Desktop\Tienda Yuliana\backend\src\main\java\com\tienda\repository\UsuarioRepository.java
 C:\Users\Hp\Desktop\Tienda Yuliana\backend\src\main\java\com\tienda\controller\PagosVentaController.java

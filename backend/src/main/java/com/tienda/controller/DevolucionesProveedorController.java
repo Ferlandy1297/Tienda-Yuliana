@@ -22,6 +22,7 @@ public class DevolucionesProveedorController {
     }
 
     @PostMapping
+    @org.springframework.security.access.prepost.PreAuthorize("hasAnyRole('ADMIN','SUPERVISOR')")
     public DevolucionProveedor registrar(@jakarta.validation.Valid @RequestBody DevolucionRequest req){
         return service.devolver(req.idProveedor, req.motivo, req.items);
     }

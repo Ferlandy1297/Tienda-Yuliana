@@ -21,4 +21,12 @@ public class FiadosController {
     public FiadoDtos.ClienteSaldo abonar(@jakarta.validation.Valid @RequestBody FiadoDtos.AbonoRequest req){
         return service.abonar(req);
     }
+
+    // Permite disparar evaluación de morosidad (p. ej. desde una tarea manual)
+    @PostMapping("/evaluar")
+    @org.springframework.security.access.prepost.PreAuthorize("hasAnyRole('ADMIN','SUPERVISOR')")
+    public java.util.Map<String,Object> evaluar(@RequestParam(defaultValue = "30") int dias) {
+        int afectados = service.evaluarMorosidad(dias);
+        return java.util.Map.of("afectados", afectados, "dias", dias);
+    }
 }

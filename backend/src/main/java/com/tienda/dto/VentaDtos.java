@@ -64,4 +64,50 @@ public class VentaDtos {
         public BigDecimal getCambio() { return cambio; }
         public void setCambio(BigDecimal cambio) { this.cambio = cambio; }
     }
+
+    // Ticket de venta para CU-TY-003
+    public static class TicketItem {
+        private String producto;
+        private Integer cantidad;
+        private BigDecimal precioUnitario;
+        private BigDecimal subtotal;
+        public String getProducto() { return producto; }
+        public void setProducto(String producto) { this.producto = producto; }
+        public Integer getCantidad() { return cantidad; }
+        public void setCantidad(Integer cantidad) { this.cantidad = cantidad; }
+        public BigDecimal getPrecioUnitario() { return precioUnitario; }
+        public void setPrecioUnitario(BigDecimal precioUnitario) { this.precioUnitario = precioUnitario; }
+        public BigDecimal getSubtotal() { return subtotal; }
+        public void setSubtotal(BigDecimal subtotal) { this.subtotal = subtotal; }
+    }
+
+    public static class VentaTicket {
+        private Long idVenta;
+        private java.time.LocalDateTime fechaHora;
+        private String cliente;
+        private String atendio;
+        private java.util.List<TicketItem> items;
+        private BigDecimal total;
+        private String metodoPago;
+        private BigDecimal montoPagado;
+        private BigDecimal cambio;
+        public Long getIdVenta() { return idVenta; }
+        public void setIdVenta(Long idVenta) { this.idVenta = idVenta; }
+        public java.time.LocalDateTime getFechaHora() { return fechaHora; }
+        public void setFechaHora(java.time.LocalDateTime fechaHora) { this.fechaHora = fechaHora; }
+        public String getCliente() { return cliente; }
+        public void setCliente(String cliente) { this.cliente = cliente; }
+        public String getAtendio() { return atendio; }
+        public void setAtendio(String atendio) { this.atendio = atendio; }
+        public java.util.List<TicketItem> getItems() { return items; }
+        public void setItems(java.util.List<TicketItem> items) { this.items = items; }
+        public BigDecimal getTotal() { return total; }
+        public void setTotal(BigDecimal total) { this.total = total; }
+        public String getMetodoPago() { return metodoPago; }
+        public void setMetodoPago(String metodoPago) { this.metodoPago = metodoPago; }
+        public BigDecimal getMontoPagado() { return montoPagado; }
+        public void setMontoPagado(BigDecimal montoPagado) { this.montoPagado = montoPagado; }
+        public BigDecimal getCambio() { return cambio; }
+        public void setCambio(BigDecimal cambio) { this.cambio = cambio; }
+    }
 }
