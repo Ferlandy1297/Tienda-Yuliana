@@ -10,6 +10,8 @@ async function load(){
   const dias = Number(document.getElementById('dias').value || '30');
   const lotes = await caducidadesApi.porVencer(dias);
   tbody.innerHTML = '';
+  const role = localStorage.getItem('rol');
+  const canActions = role === 'ADMIN' || role === 'SUPERVISOR';
   lotes.forEach(l => {
     const tr = document.createElement('tr');
     const p = l.producto || {};
@@ -21,6 +23,9 @@ async function load(){
       `<button class="btn" data-devolver="${l.id}">Devolver</button>`+
       `</td>`;
     tbody.appendChild(tr);
+    if (!canActions) {
+      const last = tr.querySelector('td:last-child'); if (last) last.innerHTML = '';
+    }
   });
 }
 
