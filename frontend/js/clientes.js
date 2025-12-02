@@ -1,4 +1,4 @@
-import { requireAuth, setUserUI, logout } from './auth.js';
+import { requireAuth, setUserUI, logout, hasRole } from './auth.js';
 import { clientesApi } from './api.js';
 
 requireAuth(); setUserUI();
@@ -18,6 +18,13 @@ async function load(){
     <td class="hstack"><button class="btn" data-edit="${c.id}">Editar</button><button class="btn btn-danger" data-del="${c.id}">Eliminar</button></td>`;
     tbody.appendChild(tr);
   });
+  // Ocultar acciones a EMPLEADO
+  try {
+    const can = hasRole(['ADMIN','SUPERVISOR']);
+    if (!can) {
+      tbody.querySelectorAll('button[data-edit], button[data-del]').forEach(btn => btn.remove());
+    }
+  } catch (_) {}
 }
 document.getElementById('reload')?.addEventListener('click', load);
 load();

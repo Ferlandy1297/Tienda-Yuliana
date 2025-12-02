@@ -1,26 +1,26 @@
-<!doctype html>
+﻿<!doctype html>
 <html lang="es">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Dashboard | Tienda</title>
+  <title>Menú | Tienda</title>
   <link rel="stylesheet" href="./css/styles.css">
 </head>
 <body>
   <div class="container">
     <div class="header">
-      <h2>Dashboard</h2>
+      <h2>Menú</h2>
       <div class="nav">
         <a class="pill" href="./productos.html">Productos</a>
         <a class="pill" href="./ventas.html">Ventas</a>
         <a class="pill" href="./clientes.html">Clientes</a>
-        <a class="pill" href="./proveedores.html">Proveedores</a>
-        <a class="pill" href="./compras.html">Compras</a>
+        <a class="pill" href="./proveedores.html" data-requires-role="ADMIN,SUPERVISOR">Proveedores</a>
+        <a class="pill" href="./compras.html" data-requires-role="ADMIN,SUPERVISOR">Compras</a>
         <a class="pill" href="./fiados.html">Fiados</a>
-        <a class="pill" href="./reportes.html">Reportes</a>
-        <a class="pill" href="./devoluciones.html">Devoluciones</a>
-        <a class="pill" href="./caducidades.html">Caducidades</a>
-        <a class="pill" href="./mermas.html">Mermas</a>
+        <a class="pill" href="./reportes.html" data-requires-role="ADMIN,SUPERVISOR">Reportes</a>
+        <a class="pill" href="./devoluciones.html" data-requires-role="ADMIN,SUPERVISOR">Devoluciones</a>
+        <a class="pill" href="./caducidades.html" data-requires-role="ADMIN,SUPERVISOR">Caducidades</a>
+        <a class="pill" href="./mermas.html" data-requires-role="ADMIN,SUPERVISOR">Mermas</a>
       </div>
       <div class="right hstack">
         <span class="tag">Usuario: <span data-username></span></span>
@@ -44,8 +44,8 @@
       <div class="hstack">
         <div>Accesos rápidos:</div>
         <a class="pill" href="./ventas.html">Registrar Venta</a>
-        <a class="pill" href="./productos.html">Gestionar Productos</a>
-        <a class="pill" href="./reportes.html">Ver Reportes</a>
+        <a class="pill" href="./productos.html" data-requires-role="ADMIN,SUPERVISOR">Gestionar Productos</a>
+        <a class="pill" href="./reportes.html" data-requires-role="ADMIN,SUPERVISOR">Ver Reportes</a>
       </div>
     </div>
   </div>
@@ -53,3 +53,4 @@
   <script type="module" src="./js/dashboard.js"></script>
 </body>
 </html>
+

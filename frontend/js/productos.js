@@ -1,4 +1,4 @@
-import { requireAuth, setUserUI, logout } from './auth.js';
+import { requireAuth, setUserUI, logout, hasRole } from './auth.js';
 import { productosApi, proveedoresApi } from './api.js';
 
 requireAuth(); setUserUI();
@@ -30,6 +30,10 @@ async function load(listFn = productosApi.listar){
   tbody.innerHTML = '';
   const list = await listFn();
   list.forEach(p => tbody.appendChild(row(p)));
+  if (!hasRole(['ADMIN','SUPERVISOR'])) {
+    tbody.querySelectorAll('button[data-edit], button[data-toggle]')
+      .forEach(btn => btn.remove());
+  }
 }
 
 document.getElementById('btnReload')?.addEventListener('click', () => load());

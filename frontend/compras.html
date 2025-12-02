@@ -11,8 +11,8 @@
     <div class="header">
       <h2>Compras</h2>
       <div class="nav">
-        <a class="pill" href="./dashboard.html">Dashboard</a>
-        <a class="pill" href="./proveedores.html">Proveedores</a>
+        <a class="pill" href="./dashboard.html">Menú</a>
+        <a class="pill" href="./proveedores.html" data-requires-role="ADMIN,SUPERVISOR">Proveedores</a>
       </div>
       <div class="right hstack">
         <span class="tag">Rol: <span data-rol></span></span>
@@ -20,7 +20,7 @@
       </div>
     </div>
 
-    <div class="panel">
+    <div class="panel" data-requires-role="ADMIN,SUPERVISOR">
       <h3>Nueva compra</h3>
       <div class="toolbar mb-2">
         <label>Proveedor</label>
@@ -48,7 +48,7 @@
       <table class="table mt-2" id="tbl"><thead><tr><th>Fecha</th><th>Estado</th><th>Total</th></tr></thead><tbody></tbody></table>
     </div>
 
-    <div class="panel">
+    <div class="panel" data-requires-role="ADMIN,SUPERVISOR">
       <h3>Pagar compra</h3>
       <div class="hstack">
         <select id="pcIdCompra" placeholder="Selecciona compra">

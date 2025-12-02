@@ -11,9 +11,9 @@
     <div class="header">
       <h2>Productos</h2>
       <div class="nav">
-        <a class="pill" href="./dashboard.html">Dashboard</a>
+        <a class="pill" href="./dashboard.html">Menú</a>
         <a class="pill" href="./ventas.html">Ventas</a>
-        <a class="pill" href="./reportes.html">Reportes</a>
+        <a class="pill" href="./reportes.html" data-requires-role="ADMIN,SUPERVISOR">Reportes</a>
       </div>
       <div class="right hstack">
         <span class="tag">Rol: <span data-rol></span></span>
@@ -21,7 +21,7 @@
       </div>
     </div>
 
-    <div class="panel">
+    <div class="panel" data-requires-role="ADMIN,SUPERVISOR">
       <h3 class="mb-2">Registrar / Editar producto</h3>
       <form id="formProd" class="row">
         <input type="hidden" name="id" />

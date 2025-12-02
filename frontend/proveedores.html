@@ -1,4 +1,4 @@
-<!doctype html>
+﻿<!doctype html>
 <html lang="es">
 <head>
   <meta charset="utf-8">
@@ -11,8 +11,8 @@
     <div class="header">
       <h2>Proveedores</h2>
       <div class="nav">
-        <a class="pill" href="./dashboard.html">Dashboard</a>
-        <a class="pill" href="./compras.html">Compras</a>
+        <a class="pill" href="./dashboard.html">Menú</a>
+        <a class="pill" href="./compras.html" data-requires-role="ADMIN,SUPERVISOR">Compras</a>
       </div>
       <div class="right hstack">
         <span class="tag">Rol: <span data-rol></span></span>
@@ -20,7 +20,7 @@
       </div>
     </div>
 
-    <div class="panel">
+    <div class="panel" data-requires-role="ADMIN,SUPERVISOR">
       <form id="form" class="row">
         <input type="hidden" name="id" />
         <div class="col"><label>Nombre</label><input name="nombre" required /></div>

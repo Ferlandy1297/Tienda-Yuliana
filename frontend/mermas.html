@@ -11,9 +11,9 @@
     <div class="header">
       <h2>Mermas</h2>
       <div class="nav">
-        <a class="pill" href="./dashboard.html">Dashboard</a>
+        <a class="pill" href="./dashboard.html">Menú</a>
         <a class="pill" href="./productos.html">Productos</a>
-        <a class="pill" href="./caducidades.html">Caducidades</a>
+        <a class="pill" href="./caducidades.html" data-requires-role="ADMIN,SUPERVISOR">Caducidades</a>
       </div>
       <div class="right hstack">
         <span class="tag">Rol: <span data-rol></span></span>
@@ -21,7 +21,7 @@
       </div>
     </div>
 
-    <div class="panel">
+    <div class="panel" data-requires-role="ADMIN,SUPERVISOR">
       <h3>Registrar merma</h3>
       <form id="form" class="row">
         <div class="col"><label>Producto</label>
